@@ -26,7 +26,8 @@ export default function DiagnosticForm({ isEmbedded = false }) {
   const [state, setState] = useState({
     nome: '', whatsapp: '',
     tipo: null, sub: null, atrasoDur: null, tempDur: null, reacomodado: null,
-    ambito: null, assist: null, agravantes: [], causa: null, culpa: 'nao', docs: []
+    ambito: null, assist: null, agravantes: [], causa: null, culpa: 'nao', docs: [],
+    term1: false, term2: false, term3: false
   });
   
   const [leadId, setLeadId] = useState(null);
@@ -90,7 +91,7 @@ export default function DiagnosticForm({ isEmbedded = false }) {
               completed: false,
               form_data: nd,
               updated_at: new Date().toISOString()
-            }, { onConflict: 'id' }).catch(console.error);
+            }, { onConflict: 'id' }).then(({ error }) => { if (error) console.error(error); });
           }
         }, 800);
       }
@@ -119,7 +120,7 @@ export default function DiagnosticForm({ isEmbedded = false }) {
     if(step === 4) return !!s.assist;
     if(step === 5) return true;
     if(step === 6) return !!s.causa;
-    if(step === 7) return true;
+    if(step === 7) return !!s.term1 && !!s.term2 && !!s.term3;
     return false;
   };
 
@@ -153,7 +154,7 @@ export default function DiagnosticForm({ isEmbedded = false }) {
   const goBack = () => { if(step > 1) setStep(s => s - 1); };
 
   const restart = () => {
-    setState({nome: '', whatsapp: '', tipo: null, sub: null, atrasoDur: null, tempDur: null, reacomodado: null, ambito: null, assist: null, agravantes: [], causa: null, culpa: 'nao', docs: []});
+    setState({nome: '', whatsapp: '', tipo: null, sub: null, atrasoDur: null, tempDur: null, reacomodado: null, ambito: null, assist: null, agravantes: [], causa: null, culpa: 'nao', docs: [], term1: false, term2: false, term3: false});
     setStep(1);
     setShowResult(false);
     setLoadPct(0);
@@ -656,6 +657,44 @@ export default function DiagnosticForm({ isEmbedded = false }) {
               {docsForTipo().map(d => (
                 <ChkOpt key={d[0]} label={d[1]} sub={d[2]} checked={state.docs.includes(d[0])} onClick={() => toggleMulti("docs", d[0])} />
               ))}
+
+              <div style={{ display: "flex", flexDirection: "column", gap: "1rem", marginTop: "2rem" }}>
+                <label style={{ display: "flex", alignItems: "flex-start", gap: "0.75rem", cursor: "pointer" }}>
+                  <input
+                    type="checkbox"
+                    checked={state.term1}
+                    onChange={(e) => setField("term1", e.target.checked)}
+                    style={{ marginTop: "4px", accentColor: "var(--lex-gold)", width: "16px", height: "16px" }}
+                  />
+                  <span style={{ fontSize: "0.85rem", color: "#475569", lineHeight: 1.4 }}>
+                    Li e concordo com a Política de Privacidade e o Termo de Consentimento.
+                  </span>
+                </label>
+                
+                <label style={{ display: "flex", alignItems: "flex-start", gap: "0.75rem", cursor: "pointer" }}>
+                  <input
+                    type="checkbox"
+                    checked={state.term2}
+                    onChange={(e) => setField("term2", e.target.checked)}
+                    style={{ marginTop: "4px", accentColor: "var(--lex-gold)", width: "16px", height: "16px" }}
+                  />
+                  <span style={{ fontSize: "0.85rem", color: "#475569", lineHeight: 1.4 }}>
+                    Autorizo a LexAero a entrar em contato comigo pelo WhatsApp e/ou telefone informado neste formulário para tratar da solicitação enviada.
+                  </span>
+                </label>
+
+                <label style={{ display: "flex", alignItems: "flex-start", gap: "0.75rem", cursor: "pointer" }}>
+                  <input
+                    type="checkbox"
+                    checked={state.term3}
+                    onChange={(e) => setField("term3", e.target.checked)}
+                    style={{ marginTop: "4px", accentColor: "var(--lex-gold)", width: "16px", height: "16px" }}
+                  />
+                  <span style={{ fontSize: "0.85rem", color: "#475569", lineHeight: 1.4 }}>
+                    Estou ciente de que o envio das informações não garante a existência de direito à indenização ou qualquer resultado jurídico.
+                  </span>
+                </label>
+              </div>
             </div>
           )}
 

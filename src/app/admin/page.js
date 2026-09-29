@@ -35,11 +35,9 @@ export default function AdminLogin() {
       }}>
         {/* Logo */}
         <div style={{ textAlign: "center", marginBottom: "2rem" }}>
-          <div style={{
-            width: 48, height: 48, background: "#FCBD26", borderRadius: "12px",
-            display: "inline-flex", alignItems: "center", justifyContent: "center",
-            fontSize: "1.5rem", marginBottom: "1rem"
-          }}>⚖️</div>
+          <div style={{ marginBottom: "1rem" }}>
+            <img src="/logo_lexaero.png" alt="LexAero" style={{ height: 64, width: "auto", objectFit: "contain" }} />
+          </div>
           <h1 style={{ color: "#fff", fontSize: "1.4rem", fontWeight: 700, margin: 0 }}>LexAero Admin</h1>
           <p style={{ color: "#666", fontSize: "0.85rem", marginTop: "0.25rem" }}>Área restrita</p>
         </div>

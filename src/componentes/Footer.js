@@ -98,7 +98,7 @@ export default function Footer() {
             {/* Redes Sociais */}
             <div style={{ display: "flex", gap: "0.75rem", alignItems: "center" }}>
               <a
-                href="https://instagram.com/lexaero"
+                href="https://www.instagram.com/lex_aero/"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Instagram LexAero"
@@ -109,7 +109,7 @@ export default function Footer() {
                 {SOCIAL.instagram}
               </a>
               <a
-                href="https://linkedin.com/company/lexaero"
+                href="https://www.google.com/goto?url=CAESYQHrOzAVaDu3KZiSOXnhTxbH_fprA9hUunkASYBl-S4usX0PT8qHSyJcV3zsjrVhf9jvw5MxU_FTjgXwfgmMnEyOpiGQywGUzJvz6mKOw0HnWFYGRHQ3qwhWj1HJqq91Rfs"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="LinkedIn LexAero"

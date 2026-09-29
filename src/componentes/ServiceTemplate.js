@@ -45,9 +45,18 @@ const PROBLEMS = [
 ];
 
 export default function ServiceTemplate({ serviceData }) {
-  const { hero, faqs, diagnosticValue, conversion } = serviceData;
+  const { hero, faqs, diagnosticValue, conversion, rights, documents } = serviceData;
   const diagUrl = `/diagnostico?problema=${encodeURIComponent(diagnosticValue)}`;
   const formattedHeadline = hero.headline.replace('até R$ 10 mil', '<span style="color: var(--lex-gold)">até R$ 10 mil</span>');
+
+  const RIGHTS_HEADLINES = {
+    'Voo atrasado': 'Seu caso provavelmente se encaixa aqui.',
+    'Voo cancelado': 'Se identificou com alguma dessas situações?',
+    'Overbooking / impedimento de embarque': 'Venderam seu lugar e te deixaram para trás?',
+    'Problema com bagagem': 'A companhia é responsável. Veja se é o seu caso.',
+    'Perdi minha conexão': 'Perdeu dias da sua viagem por culpa deles?',
+  };
+  const rightsHeadline = RIGHTS_HEADLINES[diagnosticValue] || rights?.title || 'Seu caso pode se encaixar aqui.';
 
   const faqSchema = {
     "@context": "https://schema.org",
@@ -75,7 +84,7 @@ export default function ServiceTemplate({ serviceData }) {
           <div className="hero__inner">
 
             <div className="hero__left">
-              <span className="hero__eyebrow">PROBLEMA COM VOO?</span>
+              <span className="hero__eyebrow">{hero.eyebrow || 'PROBLEMA COM VOO?'}</span>
               <h1 className="hero__headline" dangerouslySetInnerHTML={{ __html: formattedHeadline }} />
               <p className="hero__sub">{hero.subheadline}</p>
 
@@ -114,7 +123,6 @@ export default function ServiceTemplate({ serviceData }) {
 
       {/* ── DEPOIMENTOS (SOCIAL PROOF RÁPIDO) ──────────────────────────────── */}
       <Testimonials />
-
 
 
       {/* ── O QUE ACONTECEU — FUNDO BRANCO ─────────────── */}
@@ -590,6 +598,35 @@ export default function ServiceTemplate({ serviceData }) {
           </div>
         </div>
       </section>
+
+      {/* ── DOCUMENTOS NECESSÁRIOS ──────────────────────────── */}
+      {documents && documents.length > 0 && (
+        <section className="section bg-ivory" aria-labelledby="docs-heading" style={{ padding: 'var(--space-16) 0' }}>
+          <div className="container" style={{ maxWidth: 860 }}>
+            <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
+              <span className="eyebrow" style={{ display: 'none' }}>PREPARE-SE</span>
+              <h2 id="docs-heading" style={{ marginTop: '0.5rem' }}>Documentos úteis para o seu caso</h2>
+              <p style={{ color: 'var(--lex-text-muted)', maxWidth: 520, margin: '1rem auto 0', fontSize: '0.95rem', lineHeight: 1.6 }}>Reunir esses documentos antecipadamente torna a análise do seu caso muito mais ágil e precisa.</p>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(230px, 1fr))', gap: '1rem' }}>
+              {documents.map((doc, i) => (
+                <div key={i} style={{ background: '#fff', border: '1px solid #EAEAEA', borderRadius: '16px', padding: '1.25rem 1.25rem 1.25rem 1rem', display: 'flex', alignItems: 'flex-start', gap: '0.85rem', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
+                  <span style={{ flexShrink: 0, width: '32px', height: '32px', borderRadius: '10px', background: 'var(--lex-gold-bg)', border: '1px solid var(--lex-gold)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '2px' }}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--lex-gold-dark)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                  </span>
+                  <span style={{ fontSize: '0.9rem', color: 'var(--lex-text)', lineHeight: 1.45, fontWeight: 500 }}>{doc}</span>
+                </div>
+              ))}
+            </div>
+            <div style={{ textAlign: 'center', marginTop: '2.5rem' }}>
+              <Link href={diagUrl} className="btn btn--primary">
+                Iniciar análise do caso
+                <span className="btn__icon-circle" aria-hidden="true"><img src="/aviao.svg" width="20" height="20" alt="" aria-hidden="true" /></span>
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ── FAQ — PERGUNTAS FREQUENTES ───────────────────────── */}
       <FaqAccordion faqs={faqs} />

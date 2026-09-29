@@ -24,7 +24,9 @@ export default function LeadCaptureForm() {
     phone: "",
     email: "",
     problem: "",
-    lgpd: false,
+    term1: false,
+    term2: false,
+    term3: false,
   });
   const [submitting, setSubmitting] = useState(false);
   const [isSelectOpen, setIsSelectOpen] = useState(false);
@@ -65,7 +67,7 @@ export default function LeadCaptureForm() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!formData.name || !formData.phone || !formData.problem || !formData.lgpd) return;
+    if (!formData.name || !formData.phone || !formData.problem || !formData.term1 || !formData.term2 || !formData.term3) return;
     
     setSubmitting(true);
     
@@ -171,18 +173,46 @@ export default function LeadCaptureForm() {
         </div>
       </div>
 
-      <label className="checkbox-label" style={{ marginBottom: "1.5rem" }}>
-        <input
-          type="checkbox"
-          checked={formData.lgpd}
-          onChange={(e) => setFormData({ ...formData, lgpd: e.target.checked })}
-          required
-        />
-        <span className="checkbox-custom"></span>
-        <span style={{ fontSize: "0.85rem", color: "var(--lex-text-dark-muted)" }}>
-          Concordo em fornecer meus dados para que a LexAero entre em contato.
-        </span>
-      </label>
+      <div style={{ display: "flex", flexDirection: "column", gap: "1rem", marginBottom: "1.5rem" }}>
+        <label className="checkbox-label" style={{ marginBottom: 0 }}>
+          <input
+            type="checkbox"
+            checked={formData.term1}
+            onChange={(e) => setFormData({ ...formData, term1: e.target.checked })}
+            required
+          />
+          <span className="checkbox-custom"></span>
+          <span style={{ fontSize: "0.85rem", color: "var(--lex-text-dark-muted)", lineHeight: 1.4 }}>
+            Li e concordo com a Política de Privacidade e o Termo de Consentimento.
+          </span>
+        </label>
+        
+        <label className="checkbox-label" style={{ marginBottom: 0 }}>
+          <input
+            type="checkbox"
+            checked={formData.term2}
+            onChange={(e) => setFormData({ ...formData, term2: e.target.checked })}
+            required
+          />
+          <span className="checkbox-custom"></span>
+          <span style={{ fontSize: "0.85rem", color: "var(--lex-text-dark-muted)", lineHeight: 1.4 }}>
+            Autorizo a LexAero a entrar em contato comigo pelo WhatsApp e/ou telefone informado neste formulário para tratar da solicitação enviada.
+          </span>
+        </label>
+
+        <label className="checkbox-label" style={{ marginBottom: 0 }}>
+          <input
+            type="checkbox"
+            checked={formData.term3}
+            onChange={(e) => setFormData({ ...formData, term3: e.target.checked })}
+            required
+          />
+          <span className="checkbox-custom"></span>
+          <span style={{ fontSize: "0.85rem", color: "var(--lex-text-dark-muted)", lineHeight: 1.4 }}>
+            Estou ciente de que o envio das informações não garante a existência de direito à indenização ou qualquer resultado jurídico.
+          </span>
+        </label>
+      </div>
 
       <button
         type="submit"

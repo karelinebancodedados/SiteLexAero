@@ -10,12 +10,19 @@ function LeadsTab() {
   const [filter, setFilter] = useState("all");
   const [search, setSearch] = useState("");
 
+  const [error, setError] = useState(null);
+
   const fetchLeads = useCallback(async () => {
     setLoading(true);
-    const { data } = await supabase
+    setError(null);
+    const { data, error: err } = await supabase
       .from("leads")
       .select("*")
       .order("created_at", { ascending: false });
+    if (err) {
+      console.error("Supabase error:", err);
+      setError(err.message);
+    }
     setLeads(data || []);
     setLoading(false);
   }, []);
@@ -96,6 +103,10 @@ function LeadsTab() {
           <tbody>
             {loading ? (
               <tr><td colSpan={7} style={{ padding: "2rem", textAlign: "center", color: "#666" }}>Carregando...</td></tr>
+            ) : error ? (
+              <tr><td colSpan={7} style={{ padding: "2rem", textAlign: "center", color: "#ef4444" }}>
+                ⚠️ Erro ao carregar leads: <strong>{error}</strong>
+              </td></tr>
             ) : filtered.length === 0 ? (
               <tr><td colSpan={7} style={{ padding: "2rem", textAlign: "center", color: "#666" }}>Nenhum lead encontrado</td></tr>
             ) : filtered.map((lead, i) => (
@@ -203,14 +214,26 @@ function BlogTab() {
     else { setMsg("✅ Salvo com sucesso!"); fetchPosts(); setTimeout(() => { setEditing(null); setMsg(""); }, 1200); }
   };
 
-  const handleDelete = async (post) => {
-    if (!confirm(`Excluir o post "${post.title}"?`)) return;
-    const { error } = await supabase.from("blog_posts").delete().eq("id", post.id);
+  const [postToDelete, setPostToDelete] = useState(null);
+
+  const handleDeleteClick = (post) => {
+    setPostToDelete(post);
+  };
+
+  const confirmDelete = async () => {
+    if (!postToDelete) return;
+    
+    setLoading(true);
+    const { data, error } = await supabase.from("blog_posts").delete().eq("id", postToDelete.id).select();
+    
     if (error) {
-      alert("Erro ao excluir: " + error.message);
-    } else {
-      fetchPosts();
+      alert("Erro do Supabase ao excluir: " + error.message);
+    } else if (!data || data.length === 0) {
+      alert("O Supabase retornou sucesso, mas NENHUMA linha foi excluída (Verifique a política RLS).");
     }
+    
+    setPostToDelete(null);
+    fetchPosts();
   };
 
   const inputStyle = {
@@ -330,10 +353,26 @@ function BlogTab() {
               </div>
               <div style={{ display: "flex", gap: "0.5rem" }}>
                 <button onClick={() => startEdit(post)} style={{ padding: "0.45rem 0.9rem", borderRadius: "6px", border: "1px solid #2E2E2E", background: "transparent", color: "#fff", cursor: "pointer", fontSize: "0.8rem" }}>✏️ Editar</button>
-                <button onClick={() => handleDelete(post)} style={{ padding: "0.45rem 0.9rem", borderRadius: "6px", border: "1px solid #2E2E2E", background: "transparent", color: "#ef4444", cursor: "pointer", fontSize: "0.8rem" }}>🗑️ Excluir</button>
+                <button onClick={() => handleDeleteClick(post)} style={{ padding: "0.45rem 0.9rem", borderRadius: "6px", border: "1px solid #2E2E2E", background: "transparent", color: "#ef4444", cursor: "pointer", fontSize: "0.8rem" }}>🗑️ Excluir</button>
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Modal de Exclusão customizado */}
+      {postToDelete && (
+        <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.8)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 9999 }}>
+          <div style={{ background: "#111", border: "1px solid #2E2E2E", padding: "2rem", borderRadius: "12px", width: "90%", maxWidth: "400px", textAlign: "center" }}>
+            <h3 style={{ color: "#fff", marginTop: 0 }}>Excluir post?</h3>
+            <p style={{ color: "#aaa", fontSize: "0.9rem", marginBottom: "1.5rem" }}>
+              Tem certeza que deseja apagar "{postToDelete.title}"? Esta ação não pode ser desfeita.
+            </p>
+            <div style={{ display: "flex", gap: "1rem", justifyContent: "center" }}>
+              <button onClick={() => setPostToDelete(null)} style={{ padding: "0.6rem 1.2rem", background: "transparent", border: "1px solid #555", color: "#fff", borderRadius: "6px", cursor: "pointer" }}>Cancelar</button>
+              <button onClick={confirmDelete} style={{ padding: "0.6rem 1.2rem", background: "#ef4444", border: "none", color: "#fff", borderRadius: "6px", cursor: "pointer", fontWeight: "bold" }}>Sim, excluir</button>
+            </div>
+          </div>
         </div>
       )}
     </div>

@@ -14,6 +14,7 @@ export const servicesData = {
       },
     },
     hero: {
+      eyebrow: "SEU VOO ATRASOU?",
       headline: "Seu voo atrasou? <br/>Você pode ter direito a <br/>até R$ 10 mil em indenização.",
       subheadline: "Atrasos longos ou que geram perda de conexões e compromissos importantes são passíveis de indenização. Verifique sua situação em poucos minutos."
     },
@@ -71,6 +72,7 @@ export const servicesData = {
       },
     },
     hero: {
+      eyebrow: "VOO CANCELADO?",
       headline: "Voo cancelado sem aviso? <br/>Você pode ter direito a <br/>até R$ 10 mil em indenização.",
       subheadline: "Cancelamentos sem assistência adequada ou que alteram completamente seus planos podem ensejar medidas legais."
     },
@@ -128,6 +130,7 @@ export const servicesData = {
       },
     },
     hero: {
+      eyebrow: "IMPEDIDO DE EMBARCAR?",
       headline: "Foi impedido de embarcar? <br/>Receba <br/>até R$ 10 mil de indenização.",
       subheadline: "Se você possuía reserva confirmada mas não pôde voar por falta de assentos, a lei obriga a companhia a compensá-lo."
     },
@@ -179,6 +182,7 @@ export const servicesData = {
       },
     },
     hero: {
+      eyebrow: "PROBLEMA COM SUA BAGAGEM?",
       headline: "Problemas com sua bagagem? <br/>Você tem direito a <br/>até R$ 10 mil.",
       subheadline: "O extravio, violação ou dano de malas gera transtornos severos. Orientamos você sobre protocolos, prazos e medidas legais."
     },
@@ -234,6 +238,7 @@ export const servicesData = {
       },
     },
     hero: {
+      eyebrow: "PERDEU SUA CONEXÃO?",
       headline: "Perdeu sua conexão? <br/>Você pode ter direito a <br/>até R$ 10 mil.",
       subheadline: "Atrasos que causam a perda do voo seguinte são responsabilidade da companhia aérea, que deve providenciar reacomodação imediata."
     },

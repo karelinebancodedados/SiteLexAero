@@ -1,0 +1,24 @@
+name: Supabase Keep-Alive
+
+on:
+  schedule:
+    # Roda a cada 3 dias as 08:00 UTC
+    - cron: "0 8 */3 * *"
+  workflow_dispatch:
+
+jobs:
+  keepalive:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Supabase REST API
+        run: |
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+            "${{ secrets.SUPABASE_URL }}/rest/v1/leads?select=id&limit=1" \
+            -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}")
+          echo "Supabase response status: $STATUS"
+          if [ "$STATUS" != "200" ] && [ "$STATUS" != "206" ]; then
+            echo "Resposta inesperada: $STATUS"
+            exit 1
+          fi
+          echo "Supabase ativo!"
