@@ -1,6 +1,5 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
-import { pushLeadGerado } from "@/lib/tracking";
 
 const OPTIONS = [
   "Voo Atrasado",
@@ -32,8 +31,6 @@ export default function LeadCaptureForm() {
   const [submitting, setSubmitting] = useState(false);
   const [isSelectOpen, setIsSelectOpen] = useState(false);
   const selectRef = useRef(null);
-  // Garante disparo único mesmo com double-click ou re-render
-  const submittedRef = useRef(false);
 
   // Load partial lead from localStorage on mount
   useEffect(() => {
@@ -71,26 +68,17 @@ export default function LeadCaptureForm() {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!formData.name || !formData.phone || !formData.problem || !formData.term1 || !formData.term2 || !formData.term3) return;
-    // Previne disparo duplo por double-click
-    if (submittedRef.current) return;
     
     setSubmitting(true);
     
     const msg = `Olá, gostaria de falar sobre um problema com meu voo.\n\n*Dados do Lead:*\n- Nome: ${formData.name}\n- WhatsApp: ${formData.phone}\n- E-mail: ${formData.email || "Não informado"}\n- Problema: ${formData.problem}`;
     
     setTimeout(() => {
-      const opened = window.open(
+      setSubmitting(false);
+      window.open(
         `https://wa.me/553183259594?text=${encodeURIComponent(msg)}`,
         "_blank"
       );
-      setSubmitting(false);
-      // Dispara tracking somente após window.open executar com sucesso
-      // Usa submittedRef para garantir disparo único por sessão de envio
-      if (opened && !submittedRef.current) {
-        submittedRef.current = true;
-        pushLeadGerado('falar_com_especialista');
-        localStorage.removeItem('lexaero_partial_lead');
-      }
     }, 600);
   };
 
