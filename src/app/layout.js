@@ -3,6 +3,7 @@ import Script from "next/script";
 import "./globals.css";
 import HeaderWrapper from "@/componentes/HeaderWrapper";
 import FooterWrapper from "@/componentes/FooterWrapper";
+import WhatsAppWidget from "@/componentes/WhatsAppWidget";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -139,7 +140,7 @@ export default function RootLayout({ children }) {
         <HeaderWrapper />
         <main id="main-content">{children}</main>
         <FooterWrapper />
-
+        <WhatsAppWidget />
       </body>
     </html>
   );
