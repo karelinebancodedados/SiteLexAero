@@ -46,10 +46,10 @@ export const metadata = {
   },
   robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-image-preview": "large" } },
   other: {
-    "geo.region": "BR-RO",
-    "geo.placename": "Porto Velho, Rondônia, Brasil",
-    "geo.position": "-8.7612;-63.9004",
-    "ICBM": "-8.7612, -63.9004",
+    "geo.region": "BR-MG",
+    "geo.placename": "Belo Horizonte, Minas Gerais, Brasil",
+    "geo.position": "-19.9167;-43.9345",
+    "ICBM": "-19.9167, -43.9345",
   },
   verification: {
     google: "-doLCMF_2ScmlRkNEcPgKomGYVPJoiMbfGifSzBJ9Y4",
@@ -77,8 +77,8 @@ export default function RootLayout({ children }) {
               "priceRange": "Honorários ao êxito",
               "address": {
                 "@type": "PostalAddress",
-                "addressLocality": "Porto Velho",
-                "addressRegion": "RO",
+                "addressLocality": "Belo Horizonte",
+                "addressRegion": "MG",
                 "addressCountry": "BR"
               },
               "founder": {
