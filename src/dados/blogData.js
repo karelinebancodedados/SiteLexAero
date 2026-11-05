@@ -1683,7 +1683,6 @@ export const blogPosts = [
       <p>Extravio definitivo: reembolso dos itens + danos morais de R$ 2.000 a R$ 8.000. Furto de itens: valor dos itens + danos morais entre R$ 3.000 e R$ 10.000.</p>
     `,
   },
-,
 // PARTE 2: Mais 37 posts de blog para SEO
   
   // ─── CLUSTER: DIREITOS DO PASSAGEIRO AÉREO GERAL (10 posts) ───────

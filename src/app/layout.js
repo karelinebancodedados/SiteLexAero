@@ -1,16 +1,26 @@
-import { Poppins } from "next/font/google";
 import Script from "next/script";
+import "@fontsource/poppins/100.css";
+import "@fontsource/poppins/200.css";
+import "@fontsource/poppins/300.css";
+import "@fontsource/poppins/400.css";
+import "@fontsource/poppins/500.css";
+import "@fontsource/poppins/600.css";
+import "@fontsource/poppins/700.css";
+import "@fontsource/poppins/800.css";
+import "@fontsource/poppins/900.css";
+import "@fontsource/poppins/100-italic.css";
+import "@fontsource/poppins/200-italic.css";
+import "@fontsource/poppins/300-italic.css";
+import "@fontsource/poppins/400-italic.css";
+import "@fontsource/poppins/500-italic.css";
+import "@fontsource/poppins/600-italic.css";
+import "@fontsource/poppins/700-italic.css";
+import "@fontsource/poppins/800-italic.css";
+import "@fontsource/poppins/900-italic.css";
 import "./globals.css";
 import HeaderWrapper from "@/componentes/HeaderWrapper";
 import FooterWrapper from "@/componentes/FooterWrapper";
 import WhatsAppWidget from "@/componentes/WhatsAppWidget";
-
-const poppins = Poppins({
-  subsets: ["latin"],
-  variable: "--font-poppins",
-  display: "swap",
-  weight: ["300", "400", "500", "600", "700"],
-});
 
 export const metadata = {
   metadataBase: new URL("https://www.lexaero.com.br"),
@@ -59,7 +69,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="pt-BR" className={poppins.variable}>
+    <html lang="pt-BR">
       <head>
         <Script id="google-tag-manager" strategy="afterInteractive">
           {`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':

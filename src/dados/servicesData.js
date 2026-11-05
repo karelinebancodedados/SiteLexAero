@@ -9,24 +9,24 @@ export const servicesData = {
       canonical: "https://www.lexaero.com.br/voo-atrasado",
       openGraph: {
         title: "Voo Atrasado: Você Pode Ter Direito a Indenização | LexAero",
-        description: "Atraso superior a 4 horas pode gerar indenização. Análise gratuita online em 2 minutos.",
+        description: "Veja o que registrar durante o atraso e como documentar a chegada ao destino e as despesas da espera.",
         url: "https://www.lexaero.com.br/voo-atrasado",
       },
     },
     hero: {
       eyebrow: "SEU VOO ATRASOU?",
-      headline: "Seu voo atrasou? <br/>Você pode ter direito a <br/>até R$ 10 mil em indenização.",
-      subheadline: "Atrasos longos ou que geram perda de conexões e compromissos importantes são passíveis de indenização. Verifique sua situação em poucos minutos."
+      headline: "Seu voo atrasou? <br/>Entenda seus direitos <br/>durante a espera.",
+      subheadline: "Compare o horário previsto com o horário em que você chegou ao destino. Guarde os avisos da companhia e os comprovantes de despesas causadas pelo atraso."
     },
     conversion: {
-      methodologyTitle: "Como ser indenizado pelo seu voo atrasado?",
-      leadCaptureTitle: "Não deixe a companhia aérea sair impune pelo seu atraso.",
-      leadCaptureSub: "Eles já tomaram o seu tempo e esgotaram sua paciência. Agora é hora de buscar a sua compensação justa.",
-      finalCtaTitle: "Quer buscar seus direitos pelo atraso sem sair de casa? É só verificar grátis!",
-      finalCtaBtn: "Verificar caso de atraso grátis"
+      methodologyTitle: "Como avaliamos um atraso de voo",
+      leadCaptureTitle: "Conte quanto tempo o voo atrasou",
+      leadCaptureSub: "Informe os horários previstos e reais, o motivo comunicado pela companhia e como a espera afetou a sua viagem.",
+      finalCtaTitle: "Quer entender o que fazer depois de um atraso de voo?",
+      finalCtaBtn: "Verificar meu atraso"
     },
     rights: {
-      title: "Você pode ter direito quando:",
+      title: "O que observar em um atraso de voo",
       items: [
         "O atraso foi superior a 4 horas",
         "Houve perda de conexão devido ao atraso",
@@ -35,6 +35,8 @@ export const servicesData = {
         "Você chegou ao destino final muito depois do horário previsto"
       ]
     },
+    documentsTitle: "Documentos para comprovar o atraso",
+    diagnosticPrompt: "Informe os horários de partida e chegada, a assistência recebida e os compromissos afetados.",
     documents: [
       "Cartão de embarque",
       "Comprovante de reserva e itinerário original",
@@ -45,7 +47,7 @@ export const servicesData = {
     faqs: [
       {
         q: "Quantas horas de atraso podem gerar indenização?",
-        a: "Geralmente, atrasos superiores a 4 horas configuram falha na prestação de serviço, podendo gerar direito a indenização por danos morais."
+        a: "A duração é um dos pontos da análise. Também importam o motivo do atraso, o horário de chegada, a assistência prestada e os prejuízos que você consegue comprovar."
       },
       {
         q: "A companhia precisa fornecer alimentação e hotel?",
@@ -53,7 +55,7 @@ export const servicesData = {
       },
       {
         q: "Posso pedir indenização mesmo tendo chegado ao destino?",
-        a: "Sim, o transtorno, o tempo perdido e os aborrecimentos causados pelo atraso excessivo podem gerar indenização, independentemente de você ter conseguido viajar."
+        a: "Você pode pedir uma análise mesmo depois de viajar. Guarde o horário efetivo de chegada, as mensagens da companhia e as provas dos gastos ou compromissos afetados."
       }
     ]
   },
@@ -73,26 +75,28 @@ export const servicesData = {
     },
     hero: {
       eyebrow: "VOO CANCELADO?",
-      headline: "Voo cancelado sem aviso? <br/>Você pode ter direito a <br/>até R$ 10 mil em indenização.",
-      subheadline: "Cancelamentos sem assistência adequada ou que alteram completamente seus planos podem ensejar medidas legais."
+      headline: "Seu voo foi cancelado? <br/>Entenda as opções <br/>para seguir viagem.",
+      subheadline: "Confira quando a companhia avisou, quais alternativas ofereceu e se a solução permitiu chegar ao destino como planejado."
     },
     conversion: {
-      methodologyTitle: "Como ser indenizado pelo cancelamento do voo?",
-      leadCaptureTitle: "Voos cancelados destroem planos. Exija seus direitos.",
-      leadCaptureSub: "A frustração de ter a viagem interrompida de surpresa deve ser reparada. Não aceite prejuízos em silêncio.",
-      finalCtaTitle: "Teve a viagem arruinada pelo cancelamento? Verifique grátis se tem direito a compensação.",
-      finalCtaBtn: "Verificar caso de cancelamento grátis"
+      methodologyTitle: "Como avaliamos um cancelamento de voo",
+      leadCaptureTitle: "Conte como a companhia comunicou o cancelamento",
+      leadCaptureSub: "Envie o aviso de cancelamento, a reserva original e a opção que recebeu. Se comprou outra passagem, guarde o comprovante.",
+      finalCtaTitle: "Quer analisar as opções que recebeu após o cancelamento?",
+      finalCtaBtn: "Verificar meu cancelamento"
     },
     rights: {
-      title: "Você pode ter direito quando:",
+      title: "O que registrar após o cancelamento",
       items: [
         "O cancelamento ocorreu de surpresa no aeroporto",
-        "O cancelamento foi avisado com menos de 72 horas de antecedência",
+        "Você recebeu o aviso tarde e precisou mudar seus planos",
         "A reacomodação em outro voo causou grande atraso ao destino final",
         "A companhia aérea não prestou assistência material devida",
         "Você precisou comprar outra passagem por conta própria"
       ]
     },
+    documentsTitle: "Documentos para comprovar o cancelamento",
+    diagnosticPrompt: "Conte quando recebeu o aviso e se a companhia ofereceu reacomodação, reembolso ou outra alternativa.",
     documents: [
       "Cartão de embarque ou bilhete do voo cancelado",
       "Comunicações (e-mails/mensagens) sobre o cancelamento",
@@ -120,7 +124,7 @@ export const servicesData = {
     diagnosticValue: "Overbooking / impedimento de embarque",
     seo: {
       title: "Overbooking e Preterição de Embarque: Seus Direitos | LexAero",
-      description: "Foi impedido de embarcar por falta de assentos? O overbooking é uma prática abusiva e gera direito a compensação imediata e indenização.",
+      description: "Foi impedido de embarcar por falta de assentos? Saiba o que registrar e quais opções perguntar no balcão.",
       keywords: ["overbooking indenização", "embarque negado direitos", "preterição passageiro", "ANAC overbooking"],
       canonical: "https://www.lexaero.com.br/overbooking",
       openGraph: {
@@ -131,18 +135,18 @@ export const servicesData = {
     },
     hero: {
       eyebrow: "IMPEDIDO DE EMBARCAR?",
-      headline: "Foi impedido de embarcar? <br/>Receba <br/>até R$ 10 mil de indenização.",
-      subheadline: "Se você possuía reserva confirmada mas não pôde voar por falta de assentos, a lei obriga a companhia a compensá-lo."
+      headline: "Seu embarque foi negado? <br/>Entenda seus direitos <br/>em caso de overbooking.",
+      subheadline: "Se você chegou a tempo e ficou sem assento, registre o motivo informado pela companhia e as alternativas apresentadas no balcão."
     },
     conversion: {
-      methodologyTitle: "Como ser indenizado por ter sido deixado para trás?",
-      leadCaptureTitle: "Venderam o seu assento para outra pessoa? Não aceite.",
-      leadCaptureSub: "O overbooking é uma das práticas mais abusivas da aviação. A companhia lucrou em dobro e deixou você no chão. Reivindique o que é seu.",
-      finalCtaTitle: "Foi impedido de embarcar injustamente? Verifique sua indenização agora mesmo.",
-      finalCtaBtn: "Verificar caso de overbooking"
+      methodologyTitle: "Como avaliamos um embarque negado",
+      leadCaptureTitle: "Conte o que aconteceu no portão de embarque",
+      leadCaptureSub: "Informe se apresentou a tempo, se aceitou ceder o assento e o que a companhia ofereceu em troca.",
+      finalCtaTitle: "Quer entender as opções após um embarque negado?",
+      finalCtaBtn: "Verificar meu caso de overbooking"
     },
     rights: {
-      title: "Você pode ter direito quando:",
+      title: "O que indica preterição de embarque",
       items: [
         "Foi impedido de embarcar mesmo com a passagem comprada e o check-in feito",
         "A companhia alegou troca de aeronave para uma menor e faltou lugar",
@@ -150,6 +154,8 @@ export const servicesData = {
         "Você foi obrigado a voar no dia seguinte ou com longo atraso"
       ]
     },
+    documentsTitle: "Documentos para comprovar o embarque negado",
+    diagnosticPrompt: "Informe se houve falta de assento, se você se apresentou a tempo e como a companhia resolveu a situação.",
     documents: [
       "Comprovante de reserva e check-in",
       "Declaração de preterição de embarque emitida pela companhia",
@@ -163,7 +169,7 @@ export const servicesData = {
       },
       {
         q: "Aceitar a compensação no aeroporto impede processo?",
-        a: "Isso depende do termo assinado. Muitas vezes as companhias fazem o passageiro assinar uma quitação geral. É ideal consultar especialistas."
+        a: "O efeito depende do que foi aceito e do texto do termo. Guarde uma cópia da oferta, do documento assinado e do comprovante de pagamento para avaliação."
       }
     ]
   },
@@ -172,7 +178,7 @@ export const servicesData = {
     diagnosticValue: "Problema com bagagem",
     seo: {
       title: "Extravio ou Dano de Bagagem: Indenização e Direitos | LexAero",
-      description: "Sua mala foi perdida, danificada ou violada? Saiba quais são os prazos, procedimentos (RIB) e o valor de indenização aplicável.",
+      description: "Sua mala foi perdida, danificada ou violada? Veja como registrar o problema e guardar provas e recibos.",
       keywords: ["bagagem extraviada indenização", "mala perdida direitos", "RIB bagagem", "extravio bagagem ANAC", "dano bagagem passageiro"],
       canonical: "https://www.lexaero.com.br/bagagem",
       openGraph: {
@@ -183,18 +189,18 @@ export const servicesData = {
     },
     hero: {
       eyebrow: "PROBLEMA COM SUA BAGAGEM?",
-      headline: "Problemas com sua bagagem? <br/>Você tem direito a <br/>até R$ 10 mil.",
-      subheadline: "O extravio, violação ou dano de malas gera transtornos severos. Orientamos você sobre protocolos, prazos e medidas legais."
+      headline: "Sua mala sumiu ou chegou danificada? <br/>Saiba o que registrar <br/>e quais provas guardar.",
+      subheadline: "Guarde a etiqueta de despacho, registre o problema com a companhia e anote quando a mala foi devolvida, se isso aconteceu."
     },
     conversion: {
-      methodologyTitle: "Como ser indenizado pelos problemas com sua mala?",
-      leadCaptureTitle: "Sua mala sumiu ou quebrou? A responsabilidade é toda deles.",
-      leadCaptureSub: "O desespero de ficar sem seus pertences no meio de uma viagem não tem preço, mas tem indenização. Não assuma esse prejuízo sozinho.",
-      finalCtaTitle: "Ficou na mão por culpa da companhia aérea? Busque seus direitos sem sair de casa.",
-      finalCtaBtn: "Verificar caso de bagagem grátis"
+      methodologyTitle: "Como avaliamos extravio ou dano de bagagem",
+      leadCaptureTitle: "Conte o que aconteceu com a mala despachada",
+      leadCaptureSub: "Informe se ela atrasou, chegou avariada ou segue desaparecida. Separe o protocolo e os recibos de compras emergenciais.",
+      finalCtaTitle: "Quer avaliar o extravio ou os danos à sua bagagem?",
+      finalCtaBtn: "Verificar meu caso de bagagem"
     },
     rights: {
-      title: "Você pode ter direito quando:",
+      title: "Quais problemas com bagagem registrar",
       items: [
         "A mala não chegou na esteira do aeroporto (extravio temporário ou definitivo)",
         "Os pertences chegaram danificados (rodinhas quebradas, rasgos, malas destruídas)",
@@ -202,6 +208,8 @@ export const servicesData = {
         "A demora na devolução exigiu que você comprasse roupas e itens de higiene"
       ]
     },
+    documentsTitle: "Documentos para comprovar o problema com a mala",
+    diagnosticPrompt: "Informe quando percebeu o problema, como o registrou e quais despesas teve enquanto ficou sem seus pertences.",
     documents: [
       "RIB (Relatório de Irregularidade de Bagagem) registrado ainda no aeroporto",
       "Comprovante de despacho de bagagem (etiqueta)",
@@ -219,7 +227,7 @@ export const servicesData = {
       },
       {
         q: "E se minha bagagem nunca mais for encontrada?",
-        a: "O extravio definitivo confere o dever da companhia de indenizar materialmente pelos itens perdidos e, na maioria dos casos, também pelo dano moral causado."
+        a: "Guarde a confirmação de extravio, faça uma lista do conteúdo da mala e reúna comprovantes dos itens quando disponíveis. O trecho da viagem e os prejuízos documentados ajudam a avaliar a reparação."
       }
     ]
   },
@@ -233,24 +241,24 @@ export const servicesData = {
       canonical: "https://www.lexaero.com.br/conexao-perdida",
       openGraph: {
         title: "Perdeu a Conexão por Culpa da Companhia? | LexAero",
-        description: "Perda de conexão por atraso gera direito a reacomodação e indenização. Avalie gratuitamente.",
+        description: "Perdeu o segundo voo? Entenda como a reserva e a reacomodação influenciam a análise.",
         url: "https://www.lexaero.com.br/conexao-perdida",
       },
     },
     hero: {
       eyebrow: "PERDEU SUA CONEXÃO?",
-      headline: "Perdeu sua conexão? <br/>Você pode ter direito a <br/>até R$ 10 mil.",
-      subheadline: "Atrasos que causam a perda do voo seguinte são responsabilidade da companhia aérea, que deve providenciar reacomodação imediata."
+      headline: "Perdeu o voo de conexão? <br/>Entenda as opções <br/>para chegar ao destino.",
+      subheadline: "Confira se os trechos faziam parte da mesma reserva, qual voo você perdeu e em que horário chegou ao destino após a reacomodação."
     },
     conversion: {
-      methodologyTitle: "Como ser indenizado pela conexão perdida?",
-      leadCaptureTitle: "O voo deles atrasou e você perdeu a conexão? Não pague a conta.",
-      leadCaptureSub: "Eles são responsáveis por garantir que você chegue ao destino. A dor de cabeça de remarcar e perder diárias de hotel precisa ser cobrada.",
-      finalCtaTitle: "Perdeu dias da sua viagem pela conexão perdida? Verifique sua indenização agora.",
-      finalCtaBtn: "Verificar caso de conexão"
+      methodologyTitle: "Como avaliamos uma conexão perdida",
+      leadCaptureTitle: "Conte como você perdeu o segundo voo",
+      leadCaptureSub: "Separe os bilhetes dos dois trechos e informe qual novo itinerário a companhia ofereceu.",
+      finalCtaTitle: "Quer avaliar a reacomodação após perder sua conexão?",
+      finalCtaBtn: "Verificar minha conexão perdida"
     },
     rights: {
-      title: "Você pode ter direito quando:",
+      title: "O que observar ao perder uma conexão",
       items: [
         "O primeiro voo atrasou e você perdeu o embarque do segundo voo",
         "A companhia não reacomodou você no próximo voo disponível",
@@ -258,6 +266,8 @@ export const servicesData = {
         "Você perdeu dias da sua viagem, passeios ou compromissos importantes devido à perda da conexão"
       ]
     },
+    documentsTitle: "Documentos para comprovar a conexão perdida",
+    diagnosticPrompt: "Informe os horários dos dois trechos, se foram comprados juntos e quando você conseguiu chegar ao destino.",
     documents: [
       "Cartões de embarque de todos os trechos",
       "Comprovantes da nova passagem após a reacomodação",
@@ -267,11 +277,11 @@ export const servicesData = {
     faqs: [
       {
         q: "A companhia é obrigada a me colocar em um voo de outra empresa?",
-        a: "Sim. Caso a companhia não tenha voos próprios em tempo hábil para reacomodação, ela deve (sem custos) realocar o passageiro em voo de terceira empresa."
+        a: "Quando cabe reacomodação na primeira oportunidade, ela pode ocorrer em voo próprio ou de outra empresa. Peça as opções para o destino e guarde a resposta da companhia."
       },
       {
         q: "Minhas passagens foram compradas separadamente. Muda algo?",
-        a: "Geralmente sim. Se os trechos foram adquiridos em reservas/localizadores diferentes, as companhias costumam tratar como contratos distintos, eximindo-se de culpa pela conexão perdida."
+        a: "Sim. Bilhetes comprados separadamente podem representar contratos distintos e mudar a análise da reacomodação. Guarde os dois localizadores, os horários e as respostas de cada empresa."
       }
     ]
   },
@@ -280,21 +290,22 @@ export const servicesData = {
     diagnosticValue: "Outro",
     seo: {
       title: "Direito à Assistência Material: Alimentação e Hospedagem | LexAero",
-      description: "Atrasos e cancelamentos exigem assistência material da companhia aérea. Saiba quando você tem direito a alimentação, comunicação e hotel."
+      description: "Ficou sem alimentação, hospedagem ou transporte durante a espera? Veja o que registrar e quais despesas comprovar."
     },
     hero: {
-      headline: "Te deixaram sem hotel ou comida? <br/>Receba <br/>até R$ 10 mil de indenização.",
-      subheadline: "O não fornecimento de alimentação, hospedagem e comunicação durante atrasos prolongados gera o dever de indenizar."
+      eyebrow: "FICOU SEM ASSISTÊNCIA?",
+      headline: "Ficou sem assistência no aeroporto? <br/>Saiba o que a companhia <br/>deveria ter oferecido.",
+      subheadline: "Anote quanto tempo esperou, quais serviços solicitou e se precisou pagar por alimentação, transporte ou hospedagem."
     },
     conversion: {
-      methodologyTitle: "Como ser indenizado por falta de assistência?",
-      leadCaptureTitle: "Deixaram você dormindo no chão do aeroporto?",
-      leadCaptureSub: "O descaso e a humilhação de ser tratado com indiferença não podem passar em branco. O descumprimento da assistência material é gravíssimo.",
-      finalCtaTitle: "Você foi desrespeitado durante a espera? Exija compensação agora mesmo.",
-      finalCtaBtn: "Verificar caso de assistência grátis"
+      methodologyTitle: "Como avaliamos a falta de assistência no aeroporto",
+      leadCaptureTitle: "Conte o que faltou durante a espera",
+      leadCaptureSub: "Separe os protocolos e recibos das despesas que precisou pagar por conta própria.",
+      finalCtaTitle: "Quer avaliar a assistência que recebeu no aeroporto?",
+      finalCtaBtn: "Verificar a assistência recebida"
     },
     rights: {
-      title: "Você pode ter direito quando:",
+      title: "O que registrar quando falta assistência",
       items: [
         "Esperou mais de 2 horas e não recebeu voucher de alimentação",
         "O voo foi transferido para o dia seguinte e não te ofereceram hotel",
@@ -302,6 +313,8 @@ export const servicesData = {
         "Precisou arcar com transporte do aeroporto até a sua casa ou hotel"
       ]
     },
+    documentsTitle: "Documentos para comprovar a falta de assistência",
+    diagnosticPrompt: "Informe quanto tempo ficou no aeroporto, se houve pernoite e o que a companhia ofereceu durante a espera.",
     documents: [
       "Recibos de refeições no aeroporto",
       "Recibos de Uber/Táxi e Hotel",
@@ -311,7 +324,7 @@ export const servicesData = {
     faqs: [
       {
         q: "A partir de quantas horas a assistência é obrigatória?",
-        a: "A partir de 1 hora: comunicação (internet/telefone). A partir de 2 horas: alimentação. A partir de 4 horas: acomodação/hotel e transporte."
+        a: "As regras atualizadas da ANAC preveem alimentação após duas horas de espera. Após quatro horas, quando houver necessidade de pernoite, está previsto o fornecimento de hospedagem e transporte de ida e volta."
       },
       {
         q: "A companhia pode negar hotel caso eu more na mesma cidade?",
@@ -327,18 +340,19 @@ export const servicesData = {
       description: "Problemas com o reembolso da sua passagem aérea? Entenda os prazos legais e veja o que fazer caso a companhia se recuse a devolver o valor."
     },
     hero: {
-      headline: "Estão enrolando seu reembolso? <br/>Você pode ter direito a <br/>até R$ 10 mil.",
-      subheadline: "A devolução de valores, pagamento de taxas indevidas e estornos possuem prazos estipulados pela ANAC."
+      eyebrow: "REEMBOLSO PENDENTE?",
+      headline: "O reembolso da passagem não chegou? <br/>Confira o pedido <br/>e o valor da devolução.",
+      subheadline: "Compare o valor pago com o estorno recebido e guarde o protocolo com a data em que solicitou o reembolso."
     },
     conversion: {
-      methodologyTitle: "Como exigir seu dinheiro de volta corretamente?",
-      leadCaptureTitle: "Estão segurando o seu dinheiro indevidamente?",
-      leadCaptureSub: "A companhia é rápida para cobrar, mas coloca mil obstáculos na hora de reembolsar. Recupere o que é seu por direito sem burocracia.",
-      finalCtaTitle: "Cansado de brigar pelo seu reembolso? Nós avaliamos a viabilidade para você.",
-      finalCtaBtn: "Verificar direito ao reembolso"
+      methodologyTitle: "Como avaliamos um reembolso de passagem",
+      leadCaptureTitle: "Conte quando e como pediu a devolução",
+      leadCaptureSub: "Informe quem cancelou a viagem, quanto você pagou e se recebeu estorno, crédito ou uma negativa.",
+      finalCtaTitle: "Quer conferir a devolução da sua passagem?",
+      finalCtaBtn: "Verificar meu reembolso"
     },
     rights: {
-      title: "Você pode ter direito quando:",
+      title: "O que conferir no pedido de reembolso",
       items: [
         "A companhia estourou o prazo legal para devolução do valor (7 dias após a solicitação)",
         "O voo foi cancelado pela companhia e ela se recusa a devolver o dinheiro",
@@ -346,6 +360,8 @@ export const servicesData = {
         "O reembolso foi concedido em créditos contra a sua vontade"
       ]
     },
+    documentsTitle: "Documentos para comprovar o pedido de reembolso",
+    diagnosticPrompt: "Informe a data do pedido, o motivo do cancelamento e a forma de devolução oferecida.",
     documents: [
       "Comprovante de compra da passagem",
       "E-mails de solicitação de cancelamento/reembolso",
@@ -371,27 +387,30 @@ export const servicesData = {
       description: "Existem diversas falhas na prestação de serviços aéreos que geram direitos. Conheça outras situações comuns e solicite uma análise."
     },
     hero: {
-      headline: "Problema com o voo? <br/>Você pode ter direito a <br/>até R$ 10 mil em indenização.",
-      subheadline: "Desde falhas sistêmicas a problemas de acessibilidade, o consumidor é protegido pelo CDC e convenções internacionais."
+      eyebrow: "OUTRO PROBLEMA COM A COMPANHIA?",
+      headline: "Teve outro problema com a companhia? <br/>Saiba o que registrar <br/>para avaliar seu caso.",
+      subheadline: "Alterações de itinerário, falhas de acessibilidade e problemas no transporte de animais exigem provas diferentes. Comece pelo registro do que foi contratado e do que aconteceu."
     },
     conversion: {
-      methodologyTitle: "Como ser indenizado por outros transtornos?",
-      leadCaptureTitle: "Sofreu com outro descaso da companhia aérea?",
-      leadCaptureSub: "Independente de qual foi a falha, se causou dor de cabeça, você não precisa deixar barato. Nossa equipe especializada avaliará seu caso.",
-      finalCtaTitle: "Acha que tem direito a indenização pelo que passou? Verifique grátis agora.",
-      finalCtaBtn: "Verificar o meu problema grátis"
+      methodologyTitle: "Como avaliamos outros problemas no transporte aéreo",
+      leadCaptureTitle: "Descreva o serviço que não foi prestado como combinado",
+      leadCaptureSub: "Guarde a reserva, as condições do serviço e as respostas da companhia. Explique como o problema afetou sua viagem.",
+      finalCtaTitle: "Quer analisar outro problema no transporte aéreo?",
+      finalCtaBtn: "Verificar meu problema"
     },
     rights: {
-      title: "Você pode ter direito quando:",
+      title: "Outras situações que merecem análise",
       items: [
-        "Houve recusa de embarque por alegações injustificadas da companhia",
+        "A companhia alterou o itinerário ou mudou o aeroporto previsto",
         "Seu pet enfrentou problemas graves no porão ou no despacho",
         "Cancelamento abusivo de passagem de volta (no-show na ida)",
         "Falta de assistência para passageiros com necessidades especiais (PNAE)"
       ]
     },
+    documentsTitle: "Documentos para registrar o problema na viagem",
+    diagnosticPrompt: "Descreva a situação, a resposta da companhia e o impacto no seu itinerário.",
     documents: [
-      "Qualquer documento que comprove a situação enfrentada",
+        "Reserva original e condições do serviço contratado",
       "Cartões de embarque",
       "Boletim de ocorrência (se aplicável)",
       "Troca de e-mails, protocolos e laudos"
@@ -402,8 +421,8 @@ export const servicesData = {
         a: "Não. O cancelamento automático da passagem de volta por não comparecimento na ida (no-show) é considerado prática abusiva pela justiça brasileira."
       },
       {
-        q: "Qual o prazo para processar a companhia aérea?",
-        a: "Em voos nacionais, o prazo para ingressar com ação por danos (Código de Defesa do Consumidor) é geralmente de 5 anos."
+        q: "Como registrar uma falha de acessibilidade durante a viagem?",
+        a: "Guarde o pedido de assistência, o protocolo de atendimento e a resposta da companhia. Anote em qual aeroporto ou trecho ocorreu a falha e como ela afetou o embarque ou o desembarque."
       }
     ]
   }

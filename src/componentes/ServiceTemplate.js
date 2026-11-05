@@ -45,18 +45,10 @@ const PROBLEMS = [
 ];
 
 export default function ServiceTemplate({ serviceData }) {
-  const { hero, faqs, diagnosticValue, conversion, rights, documents } = serviceData;
+  const { hero, faqs, diagnosticValue, conversion, rights, documents, documentsTitle, diagnosticPrompt } = serviceData;
   const diagUrl = `/diagnostico?problema=${encodeURIComponent(diagnosticValue)}`;
-  const formattedHeadline = hero.headline.replace('até R$ 10 mil', '<span style="color: var(--lex-gold)">até R$ 10 mil</span>');
-
-  const RIGHTS_HEADLINES = {
-    'Voo atrasado': 'Seu caso provavelmente se encaixa aqui.',
-    'Voo cancelado': 'Se identificou com alguma dessas situações?',
-    'Overbooking / impedimento de embarque': 'Venderam seu lugar e te deixaram para trás?',
-    'Problema com bagagem': 'A companhia é responsável. Veja se é o seu caso.',
-    'Perdi minha conexão': 'Perdeu dias da sua viagem por culpa deles?',
-  };
-  const rightsHeadline = RIGHTS_HEADLINES[diagnosticValue] || rights?.title || 'Seu caso pode se encaixar aqui.';
+  const formattedHeadline = hero.headline.replace(/(?<=<br\/>)([^<>]+)$/, '<span style="color: var(--lex-gold)">$1</span>');
+  const rightsHeadline = rights?.title;
 
   const faqSchema = {
     "@context": "https://schema.org",
@@ -228,10 +220,10 @@ export default function ServiceTemplate({ serviceData }) {
                 Ferramenta de análise
               </span>
               <h2 id="diag-heading" style={{ color: "var(--lex-white)", fontSize: "clamp(1.75rem, 3.5vw, 2.5rem)", fontWeight: 700, lineHeight: 1.2, marginBottom: '1.25rem', textAlign: "left" }}>
-                Descubra seus direitos e a faixa de indenização para o seu caso
+                {conversion.methodologyTitle}
               </h2>
               <p style={{ color: "rgba(255,255,255,0.82)", fontSize: "1rem", lineHeight: 1.65, marginBottom: '2rem', textAlign: "left" }}>
-                Responda a algumas perguntas sobre o que aconteceu no seu voo. A ferramenta indica uma faixa praticada pelos tribunais e explica, de forma transparente, o que pesa a favor e o que merece atenção.
+                {diagnosticPrompt}
               </p>
               
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.65rem' }}>
@@ -312,9 +304,9 @@ export default function ServiceTemplate({ serviceData }) {
 
               <div className="steps-grid">
                 {[
-                  { n: "01", icon: "/analise2.png", title: "Diagnóstico em 2 minutos", desc: "Use nosso diagnóstico online para nos contar o problema do seu voo. É rápido, intuitivo e sem custos." },
+                  { n: "01", icon: "/analise2.png", title: "Diagnóstico em 2 minutos", desc: "Responda às perguntas sobre a viagem para iniciar uma avaliação gratuita." },
                   { n: "02", icon: "/avaliação2.png", title: "Nossa equipe jurídica avalia o caso", desc: "Analisamos as circunstâncias da viagem, os documentos disponíveis e as normas aplicáveis para identificar os direitos que podem estar envolvidos." },
-                  { n: "03", icon: "/burocracia3.png", title: "Orientação em cada etapa", desc: "Você recebe orientação sobre as providências cabíveis, os caminhos e a melhor estratégia jurídica disponível para o seu caso. Simples, profissional e muito mais alinhado ao posicionamento que estamos construindo." },
+                  { n: "03", icon: "/burocracia3.png", title: "Orientação em cada etapa", desc: "Você recebe orientação sobre os próximos passos e os documentos que ainda precisa reunir." },
             ].map((s) => (
               <div key={s.n} className="step" style={{ position: 'relative', zIndex: 1 }}>
                 <div style={{ marginBottom: "var(--space-5)", display: "flex", alignItems: "center", justifyContent: "center", minHeight: "40px" }}>
@@ -605,7 +597,7 @@ export default function ServiceTemplate({ serviceData }) {
           <div className="container" style={{ maxWidth: 860 }}>
             <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
               <span className="eyebrow" style={{ display: 'none' }}>PREPARE-SE</span>
-              <h2 id="docs-heading" style={{ marginTop: '0.5rem' }}>Documentos úteis para o seu caso</h2>
+              <h2 id="docs-heading" style={{ marginTop: '0.5rem' }}>{documentsTitle}</h2>
               <p style={{ color: 'var(--lex-text-muted)', maxWidth: 520, margin: '1rem auto 0', fontSize: '0.95rem', lineHeight: 1.6 }}>Reunir esses documentos antecipadamente torna a análise do seu caso muito mais ágil e precisa.</p>
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(230px, 1fr))', gap: '1rem' }}>
