@@ -31,8 +31,7 @@ export default function DiagnosticForm({ isEmbedded = false }) {
     term1: false, term2: false, term3: false
   });
   
-  const [leadId, setLeadId] = useState(null);
-  const [gclid, setGclid] = useState(null);
+  const leadId = useRef(null);
 
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [loadPct, setLoadPct] = useState(0);
@@ -42,21 +41,6 @@ export default function DiagnosticForm({ isEmbedded = false }) {
   const textSave = useRef(null);
   const furthestStep = useRef(1);
 
-  useEffect(() => {
-    // Generate UUID on mount if not exists
-    let currentId = sessionStorage.getItem('lexaero_lead_id');
-    if (!currentId) {
-      currentId = uuidv4();
-      sessionStorage.setItem('lexaero_lead_id', currentId);
-    }
-    setLeadId(currentId);
-    
-    // Get gclid
-    const urlParams = new URLSearchParams(window.location.search);
-    const g = urlParams.get('gclid');
-    if (g) setGclid(g);
-  }, []);
-  
   useEffect(() => {
     if (step > TOTAL_STEPS && !showResult) {
       setIsAnalyzing(true);
@@ -126,18 +110,18 @@ export default function DiagnosticForm({ isEmbedded = false }) {
 
   const upsertLead = (currentStep, completed = false, answers = state) => {
     clearTimeout(textSave.current);
-    if (!leadId || (!answers.nome && !answers.whatsapp && !answers.tipo)) return;
+    leadId.current ??= uuidv4();
 
     furthestStep.current = Math.max(furthestStep.current, Math.min(currentStep, TOTAL_STEPS));
     const payload = {
-      id: leadId,
+      id: leadId.current,
       name: answers.nome || null,
       phone: answers.whatsapp || null,
       problem_type: answers.tipo || null,
-      gclid,
+      gclid: new URLSearchParams(window.location.search).get("gclid"),
       last_step_reached: furthestStep.current,
       completed,
-      form_data: answers,
+      form_data: { ...answers, source: "diagnostico" },
       updated_at: new Date().toISOString()
     };
 
@@ -165,10 +149,7 @@ export default function DiagnosticForm({ isEmbedded = false }) {
     setShowResult(false);
     setLoadPct(0);
     furthestStep.current = 1;
-    // Generate fresh lead ID for new analysis
-    const newId = uuidv4();
-    sessionStorage.setItem('lexaero_lead_id', newId);
-    setLeadId(newId);
+    leadId.current = null;
   };
 
   const computeResult = () => {
@@ -527,7 +508,9 @@ export default function DiagnosticForm({ isEmbedded = false }) {
   return (
     <div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
       {/* Card: altura máxima + flex coluna = conteúdo rola, botão fica fixo */}
-      <div ref={containerRef} style={{
+      <div ref={containerRef} onFocusCapture={() => {
+        if (!leadId.current) upsertLead(1);
+      }} style={{
         ...cardStyle,
         display: "flex",
         flexDirection: "column",
