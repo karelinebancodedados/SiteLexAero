@@ -1,5 +1,7 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
+import { v4 as uuidv4 } from "uuid";
+import { supabase } from "@/lib/supabaseClient";
 
 const OPTIONS = [
   "Voo Atrasado",
@@ -31,6 +33,9 @@ export default function LeadCaptureForm() {
   const [submitting, setSubmitting] = useState(false);
   const [isSelectOpen, setIsSelectOpen] = useState(false);
   const selectRef = useRef(null);
+  const leadId = useRef(null);
+  const pendingSave = useRef(Promise.resolve());
+  const completed = useRef(false);
 
   // Load partial lead from localStorage on mount
   useEffect(() => {
@@ -42,13 +47,48 @@ export default function LeadCaptureForm() {
     }
   }, []);
 
-  // Save partial lead when field loses focus (abandoned form tracking)
+  const saveLead = (answers, submitted = false) => {
+    leadId.current ??= uuidv4();
+    completed.current ||= submitted;
+    const canStoreContact = answers.term1 && answers.term2;
+    const payload = {
+      id: leadId.current,
+      name: canStoreContact ? answers.name || null : null,
+      phone: canStoreContact ? answers.phone || null : null,
+      problem_type: answers.problem || null,
+      gclid: new URLSearchParams(window.location.search).get("gclid"),
+      last_step_reached: 1,
+      completed: completed.current,
+      form_data: {
+        source: "contato",
+        email: canStoreContact ? answers.email || null : null,
+        term1: answers.term1 ?? false,
+        term2: answers.term2 ?? false,
+        term3: answers.term3 ?? false,
+      },
+      updated_at: new Date().toISOString(),
+    };
+    pendingSave.current = pendingSave.current.then(async () => {
+      const { error } = await supabase.from("leads").upsert(payload, { onConflict: "id" });
+      if (error) console.error("Erro ao salvar contato:", error.message);
+    }).catch(error => console.error("Erro ao salvar contato:", error));
+  };
+
+  const startLead = () => {
+    if (!leadId.current) saveLead({});
+  };
+
   const savePartialLead = () => {
     if (formData.name || formData.phone || formData.email) {
       localStorage.setItem("lexaero_partial_lead", JSON.stringify(formData));
-      console.log("Lead parcial salvo (preparado para integração futura com Sheets/Drive):", formData);
-      // Aqui entrará a integração futura com a planilha/Google Drive
     }
+    saveLead(formData);
+  };
+
+  const selectAnswer = (field, value) => {
+    const answers = { ...formData, [field]: value };
+    setFormData(answers);
+    saveLead(answers);
   };
 
   useEffect(() => {
@@ -68,6 +108,8 @@ export default function LeadCaptureForm() {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!formData.name || !formData.phone || !formData.problem || !formData.term1 || !formData.term2 || !formData.term3) return;
+    saveLead(formData, true);
+    localStorage.removeItem("lexaero_partial_lead");
     
     setSubmitting(true);
     
@@ -83,7 +125,7 @@ export default function LeadCaptureForm() {
   };
 
   return (
-    <form className="lead-capture-form" onSubmit={handleSubmit}>
+    <form className="lead-capture-form" onFocusCapture={startLead} onSubmit={handleSubmit}>
       <div className="form-group">
         <label htmlFor="name">Nome completo *</label>
         <input
@@ -137,7 +179,7 @@ export default function LeadCaptureForm() {
               boxShadow: isSelectOpen ? "0 0 0 2px rgba(252, 189, 38, 0.2)" : "none",
               transition: "all 0.3s ease"
             }}
-            onClick={() => setIsSelectOpen(!isSelectOpen)}
+            onClick={() => { startLead(); setIsSelectOpen(!isSelectOpen); }}
           >
             {formData.problem || "Selecione uma opção"}
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ transform: isSelectOpen ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s" }}>
@@ -156,7 +198,7 @@ export default function LeadCaptureForm() {
               {OPTIONS.map((opt, idx) => (
                 <li 
                   key={opt}
-                  onClick={() => { setFormData({ ...formData, problem: opt }); setIsSelectOpen(false); }}
+                  onClick={() => { selectAnswer("problem", opt); setIsSelectOpen(false); }}
                   style={{ 
                     padding: "10px 16px", cursor: "pointer", color: "var(--lex-white)", 
                     borderBottom: idx === OPTIONS.length - 1 ? "none" : "1px solid var(--lex-border-dark)",
@@ -178,7 +220,7 @@ export default function LeadCaptureForm() {
           <input
             type="checkbox"
             checked={formData.term1}
-            onChange={(e) => setFormData({ ...formData, term1: e.target.checked })}
+            onChange={(e) => selectAnswer("term1", e.target.checked)}
             required
           />
           <span className="checkbox-custom"></span>
@@ -191,7 +233,7 @@ export default function LeadCaptureForm() {
           <input
             type="checkbox"
             checked={formData.term2}
-            onChange={(e) => setFormData({ ...formData, term2: e.target.checked })}
+            onChange={(e) => selectAnswer("term2", e.target.checked)}
             required
           />
           <span className="checkbox-custom"></span>
@@ -204,7 +246,7 @@ export default function LeadCaptureForm() {
           <input
             type="checkbox"
             checked={formData.term3}
-            onChange={(e) => setFormData({ ...formData, term3: e.target.checked })}
+            onChange={(e) => selectAnswer("term3", e.target.checked)}
             required
           />
           <span className="checkbox-custom"></span>

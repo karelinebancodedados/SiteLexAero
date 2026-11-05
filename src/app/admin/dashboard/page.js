@@ -66,6 +66,9 @@ function LeadAnswers({ lead }) {
   }
 
   const problem = answers.tipo || lead.problem_type;
+  const sections = answers.source === "contato"
+    ? [["Contato", ["email"]], answerSections[3]]
+    : answerSections;
   const conditionalFields = {
     sub: problem === "atraso_cancel" || problem === "bagagem",
     atrasoDur: problem === "conexao" || (problem === "atraso_cancel" && answers.sub === "atraso"),
@@ -75,12 +78,12 @@ function LeadAnswers({ lead }) {
 
   return (
     <div className={styles.sections}>
-      {answerSections.map(([title, fields]) => (
+      {sections.map(([title, fields]) => (
         <section className={styles.section} key={title}>
           <h4>{title}</h4>
           <dl>
             {fields.filter(field => conditionalFields[field] ?? true).map(field => {
-              const [label, options] = answerLabels[field];
+              const [label, options] = answerLabels[field] ?? ["E-mail"];
               const value = answers[field];
               let answer = <span className={styles.muted}>Sem resposta registrada</span>;
               if (Array.isArray(value)) {
@@ -156,7 +159,7 @@ function LeadsTab() {
     const headers = ["Nome", "WhatsApp", "Problema", "Etapa", "Status", "GCLID", "Data"];
     const rows = filtered.map(l => [
       l.name || "-", l.phone || "-", l.problem_type || "-",
-      l.last_step_reached || 1, l.completed ? "Finalizado" : "Abandonou",
+      l.last_step_reached || 1, l.completed ? "Finalizado" : "Incompleto",
       l.gclid || "-", new Date(l.created_at).toLocaleString("pt-BR")
     ]);
     const csv = [headers, ...rows].map(r => r.join(";")).join("\n");
@@ -178,15 +181,18 @@ function LeadsTab() {
           <h2 style={{ color: "#fff", fontSize: "1.2rem", fontWeight: 700, margin: 0 }}>{demo ? "Leads de demonstração" : "Leads capturados"}</h2>
           <p style={{ color: "#666", fontSize: "0.8rem", margin: 0 }}>{leads.length} total • {leads.filter(l => l.completed).length} finalizados</p>
         </div>
-        <button onClick={exportCSV} style={{
+        <div style={{ display: "flex", gap: "0.5rem" }}>
+          <button type="button" className={styles.detailsButton} onClick={fetchLeads}>Atualizar lista</button>
+          <button onClick={exportCSV} style={{
           background: "#FCBD26", color: "#111", fontWeight: 700, padding: "0.6rem 1.2rem",
           borderRadius: "8px", border: "none", cursor: "pointer", fontSize: "0.85rem"
-        }}>⬇ Exportar CSV</button>
+          }}>⬇ Exportar CSV</button>
+        </div>
       </div>
 
       {/* Filtros */}
       <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1rem", flexWrap: "wrap" }}>
-        {[["all","Todos"], ["completed","✅ Finalizou"], ["abandoned","⏳ Abandonou"]].map(([v, l]) => (
+        {[["all","Todos"], ["completed","✅ Finalizou"], ["abandoned","⏳ Incompletos"]].map(([v, l]) => (
           <button key={v} onClick={() => setFilter(v)} style={{
             padding: "0.4rem 1rem", borderRadius: "99px", border: "1px solid",
             borderColor: filter === v ? "#FCBD26" : "#2E2E2E",
@@ -226,7 +232,7 @@ function LeadsTab() {
               <tr><td colSpan={8} style={{ padding: "2rem", textAlign: "center", color: "#666" }}>Nenhum lead encontrado</td></tr>
             ) : filtered.map((lead, i) => (
               <tr key={lead.id} style={{ borderBottom: "1px solid #1a1a1a", background: i % 2 === 0 ? "transparent" : "rgba(255,255,255,0.01)" }}>
-                <td style={{ padding: "0.75rem 1rem", color: "#fff", fontWeight: 500 }}>{lead.name || <span style={{color:"#555"}}>—</span>}</td>
+                <td style={{ padding: "0.75rem 1rem", color: "#fff", fontWeight: 500 }}>{lead.name || <span style={{color:"#aaa"}}>Sem nome informado</span>}</td>
                 <td style={{ padding: "0.75rem 1rem", color: "#ccc" }}>{lead.phone || <span style={{color:"#555"}}>—</span>}</td>
                 <td style={{ padding: "0.75rem 1rem", color: "#ccc" }}>{problemLabel(lead.problem_type)}</td>
                 <td style={{ padding: "0.75rem 1rem" }}>
@@ -243,14 +249,14 @@ function LeadsTab() {
                     Ver detalhes
                   </button>
                 </td>
-                <td style={{ padding: "0.75rem 1rem", color: "#FCBD26", fontWeight: 700, textAlign: "center" }}>{lead.last_step_reached || 1}/7</td>
+                <td style={{ padding: "0.75rem 1rem", color: "#FCBD26", fontWeight: 700, textAlign: "center" }}>{lead.form_data?.source === "contato" ? "Contato" : `${lead.last_step_reached || 1}/7`}</td>
                 <td style={{ padding: "0.75rem 1rem" }}>
                   <span style={{
                     padding: "0.2rem 0.7rem", borderRadius: "99px", fontSize: "0.75rem", fontWeight: 600,
                     background: lead.completed ? "rgba(34,197,94,0.15)" : "rgba(249,115,22,0.15)",
                     color: lead.completed ? "#4ade80" : "#fb923c"
                   }}>
-                    {lead.completed ? "✅ Finalizou" : "⏳ Abandonou"}
+                    {lead.completed ? "✅ Finalizou" : "⏳ Incompleto"}
                   </span>
                 </td>
                 <td style={{ padding: "0.75rem 1rem", color: "#555", fontSize: "0.75rem", maxWidth: "120px", overflow: "hidden", textOverflow: "ellipsis" }}>{lead.gclid || "—"}</td>
@@ -280,7 +286,13 @@ function LeadsTab() {
               <div><dt>Nome</dt><dd>{selectedLead.name || "Não informado"}</dd></div>
               <div><dt>WhatsApp</dt><dd>{selectedLead.phone || "Não informado"}</dd></div>
               <div><dt>Problema</dt><dd>{problemLabel(selectedLead.problem_type || selectedLead.form_data?.tipo)}</dd></div>
-              <div><dt>Diagnóstico</dt><dd>{selectedLead.completed ? "Finalizado" : "Incompleto"} · Etapa {selectedLead.last_step_reached || 1}/7</dd></div>
+              <div>
+                <dt>{selectedLead.form_data?.source === "contato" ? "Formulário de contato" : "Diagnóstico"}</dt>
+                <dd>
+                  {selectedLead.completed ? "Finalizado" : "Incompleto"}
+                  {selectedLead.form_data?.source !== "contato" && ` · Etapa ${selectedLead.last_step_reached || 1}/7`}
+                </dd>
+              </div>
             </dl>
             <LeadAnswers lead={selectedLead} />
           </div>
