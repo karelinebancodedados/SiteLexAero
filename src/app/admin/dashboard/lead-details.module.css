@@ -1,0 +1,139 @@
+.detailsButton {
+  padding: 0.45rem 0.75rem;
+  border: 1px solid #665321;
+  border-radius: 0.5rem;
+  background: #282011;
+  color: #ffd15c;
+  font: inherit;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.detailsButton:hover {
+  background: #3c2e12;
+}
+
+.detailsButton:focus-visible {
+  outline: 2px solid #ffd15c;
+  outline-offset: 3px;
+}
+
+.dialog {
+  position: fixed;
+  inset: 0;
+  width: min(46rem, calc(100% - 2rem));
+  max-height: calc(100dvh - 2rem);
+  margin: auto;
+  padding: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  border: 1px solid #3b3b3b;
+  border-radius: 1rem;
+  background: #111;
+  color: #f5f5f5;
+  font-size: 0.9rem;
+}
+
+.dialog::backdrop {
+  background: rgb(0 0 0 / 75%);
+}
+
+.dialogHeader {
+  position: sticky;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid #333;
+  background: #111;
+}
+
+.dialogHeader h3 {
+  margin: 0;
+  color: inherit;
+  font-size: 1.1rem;
+}
+
+.body {
+  padding: 1.25rem;
+}
+
+.contact,
+.sections {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.contact,
+.section {
+  padding: 1rem;
+  border: 1px solid #333;
+  border-radius: 0.75rem;
+  background: #191919;
+}
+
+.contact {
+  margin: 0 0 0.75rem;
+}
+
+.section h4 {
+  margin: 0 0 0.75rem;
+  color: #ffd15c;
+  font-size: 0.9rem;
+}
+
+.section dl {
+  display: grid;
+  gap: 0.75rem;
+  margin: 0;
+}
+
+.dialog dt {
+  margin-bottom: 0.15rem;
+  color: #bdbdbd;
+  font-size: 0.78rem;
+}
+
+.dialog dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.selections {
+  margin: 0;
+  padding-left: 1.15rem;
+  list-style: disc;
+}
+
+.checked,
+.unchecked {
+  display: inline-block;
+  padding: 0.125rem 0.55rem;
+  border-radius: 0.4rem;
+  font-size: 0.78rem;
+}
+
+.checked {
+  background: #173422;
+  color: #95e7ae;
+}
+
+.unchecked {
+  background: #382910;
+  color: #ffcf80;
+}
+
+.empty,
+.muted {
+  color: #bdbdbd;
+}
+
+@media (max-width: 36rem) {
+  .sections {
+    grid-template-columns: 1fr;
+  }
+}

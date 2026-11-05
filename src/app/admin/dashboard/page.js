@@ -1,7 +1,113 @@
 "use client";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
+import styles from "./lead-details.module.css";
+
+const answerLabels = {
+  sub: ["Ocorrência", { atraso: "Voo atrasado", cancelamento: "Voo cancelado", alteracao: "Alteração sem acordo", extravio_def: "Extravio definitivo", extravio_temp: "Extravio temporário", avaria: "Dano, violação ou furto" }],
+  atrasoDur: ["Tempo de atraso", { lt4: "Menos de 4 horas", "4a8": "Entre 4 e 8 horas", "8a12": "Entre 8 e 12 horas", gt12: "Mais de 12 horas" }],
+  tempDur: ["Tempo sem a bagagem", { ate24: "Até 24 horas", "24a72": "De 24 a 72 horas", "72a168": "De 3 a 7 dias", gt168: "Mais de 7 dias" }],
+  reacomodado: ["Reacomodação rápida", { sim: "Sim", nao: "Não" }],
+  ambito: ["Tipo de voo", { domestico: "Doméstico", internacional: "Internacional" }],
+  assist: ["Assistência material", { sim: "Adequada", parcial: "Parcial", nao: "Não prestada" }],
+  agravantes: ["Agravantes", { perda_compromisso: "Perda de compromisso importante", hipervulnerabilidade: "Passageiro em situação de vulnerabilidade", despesas: "Despesas extras comprovadas" }],
+  causa: ["Motivo alegado pela companhia", { interno: "Falha da companhia", externo: "Força maior / fortuito externo", nao_informado: "Não sei / não foi informado" }],
+  culpa: ["Companhia alegou culpa exclusiva do passageiro", { sim: "Sim", nao: "Não" }],
+  docs: ["Documentos marcados", { bilhete: "Bilhete / e-ticket", embarque: "Cartão de embarque", protocolo: "Protocolo de reclamação", prints: "Prints / e-mails da companhia", rib: "RIB", fotos: "Fotos / vídeos", notas: "Notas fiscais", despesasdoc: "Comprovantes de despesas extras", compromisso: "Comprovante do compromisso perdido" }],
+  term1: ["Política de privacidade e consentimento"],
+  term2: ["Autorização de contato por WhatsApp ou telefone"],
+  term3: ["Ciência de que o envio não garante indenização"],
+};
+
+const answerSections = [
+  ["Ocorrência e voo", ["sub", "atrasoDur", "tempDur", "reacomodado", "ambito"]],
+  ["Assistência e circunstâncias", ["assist", "causa", "culpa", "agravantes"]],
+  ["Documentos", ["docs"]],
+  ["Consentimentos", ["term1", "term2", "term3"]],
+];
+
+const demoLeads = [
+  {
+    id: "demo-atraso",
+    name: "Marina Costa (teste)",
+    phone: "(00) 90000-0001",
+    problem_type: "atraso_cancel",
+    created_at: "2026-11-05T14:30:00-03:00",
+    completed: true,
+    last_step_reached: 7,
+    form_data: {
+      tipo: "atraso_cancel", sub: "atraso", atrasoDur: "4a8", ambito: "domestico",
+      assist: "parcial", causa: "interno", culpa: "nao", culpaRespondida: true,
+      agravantes: ["perda_compromisso", "despesas"], docs: ["bilhete", "prints", "despesasdoc"],
+      term1: true, term2: true, term3: true,
+    },
+  },
+  {
+    id: "demo-bagagem",
+    name: "Rafael Lima (teste)",
+    phone: "(00) 90000-0002",
+    problem_type: "bagagem",
+    created_at: "2026-11-05T13:15:00-03:00",
+    completed: false,
+    last_step_reached: 4,
+    form_data: {
+      tipo: "bagagem", sub: "extravio_temp", tempDur: "24a72", ambito: "internacional",
+      assist: null, causa: null, agravantes: [], docs: [],
+      term1: false, term2: false, term3: false,
+    },
+  },
+];
+
+function LeadAnswers({ lead }) {
+  const answers = lead.form_data;
+  if (!answers || typeof answers !== "object" || !Object.keys(answers).length) {
+    return <p className={styles.empty}>Este lead não tem respostas detalhadas registradas.</p>;
+  }
+
+  const problem = answers.tipo || lead.problem_type;
+  const conditionalFields = {
+    sub: problem === "atraso_cancel" || problem === "bagagem",
+    atrasoDur: problem === "conexao" || (problem === "atraso_cancel" && answers.sub === "atraso"),
+    tempDur: problem === "bagagem" && answers.sub === "extravio_temp",
+    reacomodado: problem === "overbooking",
+  };
+
+  return (
+    <div className={styles.sections}>
+      {answerSections.map(([title, fields]) => (
+        <section className={styles.section} key={title}>
+          <h4>{title}</h4>
+          <dl>
+            {fields.filter(field => conditionalFields[field] ?? true).map(field => {
+              const [label, options] = answerLabels[field];
+              const value = answers[field];
+              let answer = <span className={styles.muted}>Sem resposta registrada</span>;
+              if (Array.isArray(value)) {
+                answer = value.length ? (
+                  <ul className={styles.selections}>
+                    {value.map(option => <li key={option}>{options?.[option] ?? option}</li>)}
+                  </ul>
+                ) : <span className={styles.muted}>Nenhuma opção marcada</span>;
+              } else if (typeof value === "boolean") {
+                answer = (
+                  <span className={value ? styles.checked : styles.unchecked}>
+                    {value ? "Marcado" : "Não marcado"}
+                  </span>
+                );
+              } else if (field === "culpa" && value === "nao" && answers.culpaRespondida !== true) {
+                answer = <span className={styles.muted}>Sem seleção confirmada (padrão: Não)</span>;
+              } else if (typeof value === "string" && value) {
+                answer = options?.[value] ?? value;
+              }
+              return <div key={field}><dt>{label}</dt><dd>{answer}</dd></div>;
+            })}
+          </dl>
+        </section>
+      ))}
+    </div>
+  );
+}
 
 // ── Leads Tab ─────────────────────────────────────────────────
 function LeadsTab() {
@@ -9,12 +115,21 @@ function LeadsTab() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("all");
   const [search, setSearch] = useState("");
+  const [selectedLead, setSelectedLead] = useState(null);
+  const [demo, setDemo] = useState(false);
+  const detailsDialog = useRef(null);
 
   const [error, setError] = useState(null);
 
   const fetchLeads = useCallback(async () => {
     setLoading(true);
     setError(null);
+    if (process.env.NODE_ENV === "development" && new URLSearchParams(window.location.search).get("demo") === "1") {
+      setDemo(true);
+      setLeads(demoLeads);
+      setLoading(false);
+      return;
+    }
     const { data, error: err } = await supabase
       .from("leads")
       .select("*")
@@ -60,7 +175,7 @@ function LeadsTab() {
       {/* Header */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem", flexWrap: "wrap", gap: "1rem" }}>
         <div>
-          <h2 style={{ color: "#fff", fontSize: "1.2rem", fontWeight: 700, margin: 0 }}>Leads capturados</h2>
+          <h2 style={{ color: "#fff", fontSize: "1.2rem", fontWeight: 700, margin: 0 }}>{demo ? "Leads de demonstração" : "Leads capturados"}</h2>
           <p style={{ color: "#666", fontSize: "0.8rem", margin: 0 }}>{leads.length} total • {leads.filter(l => l.completed).length} finalizados</p>
         </div>
         <button onClick={exportCSV} style={{
@@ -95,25 +210,39 @@ function LeadsTab() {
         <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.85rem" }}>
           <thead>
             <tr style={{ background: "#111", borderBottom: "1px solid #2E2E2E" }}>
-              {["Nome","WhatsApp","Problema","Etapa","Status","GCLID","Data"].map(h => (
+              {["Nome","WhatsApp","Problema","Detalhes","Etapa","Status","GCLID","Data"].map(h => (
                 <th key={h} style={{ padding: "0.75rem 1rem", textAlign: "left", color: "#aaa", fontWeight: 600, fontSize: "0.75rem", whiteSpace: "nowrap" }}>{h}</th>
               ))}
             </tr>
           </thead>
           <tbody>
             {loading ? (
-              <tr><td colSpan={7} style={{ padding: "2rem", textAlign: "center", color: "#666" }}>Carregando...</td></tr>
+              <tr><td colSpan={8} style={{ padding: "2rem", textAlign: "center", color: "#666" }}>Carregando...</td></tr>
             ) : error ? (
-              <tr><td colSpan={7} style={{ padding: "2rem", textAlign: "center", color: "#ef4444" }}>
+              <tr><td colSpan={8} style={{ padding: "2rem", textAlign: "center", color: "#ef4444" }}>
                 ⚠️ Erro ao carregar leads: <strong>{error}</strong>
               </td></tr>
             ) : filtered.length === 0 ? (
-              <tr><td colSpan={7} style={{ padding: "2rem", textAlign: "center", color: "#666" }}>Nenhum lead encontrado</td></tr>
+              <tr><td colSpan={8} style={{ padding: "2rem", textAlign: "center", color: "#666" }}>Nenhum lead encontrado</td></tr>
             ) : filtered.map((lead, i) => (
               <tr key={lead.id} style={{ borderBottom: "1px solid #1a1a1a", background: i % 2 === 0 ? "transparent" : "rgba(255,255,255,0.01)" }}>
                 <td style={{ padding: "0.75rem 1rem", color: "#fff", fontWeight: 500 }}>{lead.name || <span style={{color:"#555"}}>—</span>}</td>
                 <td style={{ padding: "0.75rem 1rem", color: "#ccc" }}>{lead.phone || <span style={{color:"#555"}}>—</span>}</td>
                 <td style={{ padding: "0.75rem 1rem", color: "#ccc" }}>{problemLabel(lead.problem_type)}</td>
+                <td style={{ padding: "0.75rem 1rem" }}>
+                  <button
+                    type="button"
+                    className={styles.detailsButton}
+                    aria-haspopup="dialog"
+                    aria-label={`Ver detalhes de ${lead.name || lead.phone || "lead sem identificação"}`}
+                    onClick={() => {
+                      setSelectedLead(lead);
+                      detailsDialog.current.showModal();
+                    }}
+                  >
+                    Ver detalhes
+                  </button>
+                </td>
                 <td style={{ padding: "0.75rem 1rem", color: "#FCBD26", fontWeight: 700, textAlign: "center" }}>{lead.last_step_reached || 1}/7</td>
                 <td style={{ padding: "0.75rem 1rem" }}>
                   <span style={{
@@ -133,6 +262,30 @@ function LeadsTab() {
           </tbody>
         </table>
       </div>
+      <dialog
+        ref={detailsDialog}
+        className={styles.dialog}
+        aria-labelledby="lead-details-title"
+        onClose={() => setSelectedLead(null)}
+      >
+        <header className={styles.dialogHeader}>
+          <h3 id="lead-details-title">Detalhes do lead</h3>
+          <form method="dialog">
+            <button type="submit" className={styles.detailsButton}>Fechar</button>
+          </form>
+        </header>
+        {selectedLead && (
+          <div className={styles.body}>
+            <dl className={styles.contact}>
+              <div><dt>Nome</dt><dd>{selectedLead.name || "Não informado"}</dd></div>
+              <div><dt>WhatsApp</dt><dd>{selectedLead.phone || "Não informado"}</dd></div>
+              <div><dt>Problema</dt><dd>{problemLabel(selectedLead.problem_type || selectedLead.form_data?.tipo)}</dd></div>
+              <div><dt>Diagnóstico</dt><dd>{selectedLead.completed ? "Finalizado" : "Incompleto"} · Etapa {selectedLead.last_step_reached || 1}/7</dd></div>
+            </dl>
+            <LeadAnswers lead={selectedLead} />
+          </div>
+        )}
+      </dialog>
     </div>
   );
 }

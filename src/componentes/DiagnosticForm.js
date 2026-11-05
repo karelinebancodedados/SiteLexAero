@@ -27,7 +27,7 @@ export default function DiagnosticForm({ isEmbedded = false }) {
   const [state, setState] = useState({
     nome: '', whatsapp: '',
     tipo: null, sub: null, atrasoDur: null, tempDur: null, reacomodado: null,
-    ambito: null, assist: null, agravantes: [], causa: null, culpa: 'nao', docs: [],
+    ambito: null, assist: null, agravantes: [], causa: null, culpa: 'nao', culpaRespondida: false, docs: [],
     term1: false, term2: false, term3: false
   });
   
@@ -38,8 +38,9 @@ export default function DiagnosticForm({ isEmbedded = false }) {
   const [loadPct, setLoadPct] = useState(0);
   const [showResult, setShowResult] = useState(false);
   const containerRef = useRef(null);
-  // Garante disparo único por conclusão de diagnóstico
-  const leadTrackedRef = useRef(false);
+  const pendingSave = useRef(Promise.resolve());
+  const textSave = useRef(null);
+  const furthestStep = useRef(1);
 
   useEffect(() => {
     // Generate UUID on mount if not exists
@@ -59,12 +60,16 @@ export default function DiagnosticForm({ isEmbedded = false }) {
   useEffect(() => {
     if (step > TOTAL_STEPS && !showResult) {
       setIsAnalyzing(true);
+      let progress = 0;
       const t = setInterval(() => {
-        setLoadPct(p => {
-          const n = p + 2;
-          if (n >= 100) { clearInterval(t); setIsAnalyzing(false); setShowResult(true); upsertLead(TOTAL_STEPS, true); return 100; }
-          return n;
-        });
+        progress += 2;
+        setLoadPct(progress);
+        if (progress === 100) {
+          clearInterval(t);
+          setIsAnalyzing(false);
+          setShowResult(true);
+          upsertLead(TOTAL_STEPS, true);
+        }
       }, 30);
       return () => clearInterval(t);
     }
@@ -76,37 +81,29 @@ export default function DiagnosticForm({ isEmbedded = false }) {
     return money(min) + ' – ' + money(max);
   };
 
-  const setField = (f, v) => {
-    setState(d => {
-      const nd = { ...d, [f]: v };
-      if(f==='sub'){ nd.atrasoDur = null; nd.tempDur = null; }
-      // Upsert after state update for name/whatsapp capture
-      if (f === 'nome' || f === 'whatsapp') {
-        setTimeout(() => {
-          if (leadId) {
-            supabase.from('leads').upsert({
-              id: leadId,
-              name: f === 'nome' ? v : d.nome || null,
-              phone: f === 'whatsapp' ? v : d.whatsapp || null,
-              problem_type: d.tipo || null,
-              gclid: gclid,
-              last_step_reached: step,
-              completed: false,
-              form_data: nd,
-              updated_at: new Date().toISOString()
-            }, { onConflict: 'id' }).then(({ error }) => { if (error) console.error(error); });
-          }
-        }, 800);
-      }
-      return nd;
-    });
+  const setField = (field, value) => {
+    const answers = { ...state, [field]: value };
+    if (field === "tipo" && value !== state.tipo) {
+      Object.assign(answers, { sub: null, atrasoDur: null, tempDur: null, reacomodado: null, docs: [] });
+    }
+    if (field === "sub" && value !== state.sub) {
+      Object.assign(answers, { atrasoDur: null, tempDur: null });
+    }
+    if (field === "culpa") answers.culpaRespondida = true;
+    setState(answers);
+    if (field === "nome" || field === "whatsapp") {
+      clearTimeout(textSave.current);
+      textSave.current = setTimeout(() => upsertLead(step, false, answers), 500);
+    } else {
+      upsertLead(step, false, answers);
+    }
   };
-  const toggleMulti = (f, v) => {
-    setState(d => {
-      let arr = d[f] || [];
-      if(arr.includes(v)) return { ...d, [f]: arr.filter(x => x!==v) };
-      return { ...d, [f]: [...arr, v] };
-    });
+
+  const toggleMulti = (field, value) => {
+    const selected = state[field];
+    setField(field, selected.includes(value)
+      ? selected.filter(option => option !== value)
+      : [...selected, value]);
   };
 
   const stepValid = () => {
@@ -127,30 +124,29 @@ export default function DiagnosticForm({ isEmbedded = false }) {
     return false;
   };
 
-  const upsertLead = async (currentStep, completed = false) => {
-    if (!leadId) return;
-    try {
-      const { error } = await supabase.from('leads').upsert({
-        id: leadId,
-        name: state.nome || null,
-        phone: state.whatsapp || null,
-        problem_type: state.tipo || null,
-        gclid: gclid,
-        last_step_reached: currentStep,
-        completed: completed,
-        form_data: state,
-        updated_at: new Date().toISOString()
-      }, { onConflict: 'id' });
+  const upsertLead = (currentStep, completed = false, answers = state) => {
+    clearTimeout(textSave.current);
+    if (!leadId || (!answers.nome && !answers.whatsapp && !answers.tipo)) return;
 
-      // Dispara form_lead_gerado SOMENTE após confirmação real de sucesso no Supabase
-      // e somente uma vez por diagnóstico (leadTrackedRef evita duplicidade)
-      if (completed && !error && !leadTrackedRef.current) {
-        leadTrackedRef.current = true;
-        pushLeadGerado('diagnostico_voo');
-      }
-    } catch(e) {
-      console.error(e);
-    }
+    furthestStep.current = Math.max(furthestStep.current, Math.min(currentStep, TOTAL_STEPS));
+    const payload = {
+      id: leadId,
+      name: answers.nome || null,
+      phone: answers.whatsapp || null,
+      problem_type: answers.tipo || null,
+      gclid,
+      last_step_reached: furthestStep.current,
+      completed,
+      form_data: answers,
+      updated_at: new Date().toISOString()
+    };
+
+    // Aguarda a gravação anterior para que respostas antigas não sobrescrevam as novas.
+    pendingSave.current = pendingSave.current.then(async () => {
+      const { error } = await supabase.from('leads').upsert(payload, { onConflict: 'id' });
+      if (error) throw error;
+      if (completed) pushLeadGerado('diagnostico_voo');
+    }).catch(error => console.error(error));
   };
 
   const goNext = () => {
@@ -164,12 +160,11 @@ export default function DiagnosticForm({ isEmbedded = false }) {
   const goBack = () => { if(step > 1) setStep(s => s - 1); };
 
   const restart = () => {
-    setState({nome: '', whatsapp: '', tipo: null, sub: null, atrasoDur: null, tempDur: null, reacomodado: null, ambito: null, assist: null, agravantes: [], causa: null, culpa: 'nao', docs: [], term1: false, term2: false, term3: false});
+    setState({nome: '', whatsapp: '', tipo: null, sub: null, atrasoDur: null, tempDur: null, reacomodado: null, ambito: null, assist: null, agravantes: [], causa: null, culpa: 'nao', culpaRespondida: false, docs: [], term1: false, term2: false, term3: false});
     setStep(1);
     setShowResult(false);
     setLoadPct(0);
-    // Reseta flag de tracking para permitir novo disparo em nova análise
-    leadTrackedRef.current = false;
+    furthestStep.current = 1;
     // Generate fresh lead ID for new analysis
     const newId = uuidv4();
     sessionStorage.setItem('lexaero_lead_id', newId);
