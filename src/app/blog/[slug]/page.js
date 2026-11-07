@@ -2,11 +2,12 @@ import Link from "next/link";
 import { blogPosts as fallbackPosts, getBlogPost as getFallbackPost } from "@/dados/blogData";
 import { notFound } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
+import { RADAR_SLUG_PATTERN, RADAR_SLUG_PREFIX } from "@/lib/radarPosts";
 
 export async function generateStaticParams() {
   // Try to fetch from DB for static generation
   try {
-    const { data } = await supabase.from('blog_posts').select('slug');
+    const { data } = await supabase.from('blog_posts').select('slug').not("slug", "like", RADAR_SLUG_PATTERN);
     if (data && data.length > 0) {
       return data.map((post) => ({ slug: post.slug }));
     }
@@ -18,6 +19,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }) {
   const { slug } = await params;
+  if (slug.startsWith(RADAR_SLUG_PREFIX)) return {};
   let post = null;
   
   try {
@@ -51,6 +53,7 @@ export const revalidate = 60;
 
 export default async function BlogPostPage({ params }) {
   const { slug } = await params;
+  if (slug.startsWith(RADAR_SLUG_PREFIX)) notFound();
   let post = null;
   let related = [];
   
@@ -72,6 +75,7 @@ export default async function BlogPostPage({ params }) {
         .from('blog_posts')
         .select('*')
         .neq('slug', slug)
+        .not("slug", "like", RADAR_SLUG_PATTERN)
         .limit(2);
         
       if (relatedData) {

@@ -34,7 +34,7 @@ const FOOTER_LINKS = {
   ],
   "Institucional": [
     { label: "Kareline Staut", href: "/kareline-staut" },
-    { label: "Sobre a LexAero", href: "/kareline-staut" },
+    { label: "Sobre a LexAero", href: "/sobre-a-lexaero" },
     { label: "Como funciona", href: "/#how-heading" },
     { label: "Radar Jurídico", href: "/radar-juridico" },
     { label: "Conteúdos", href: "/blog" },

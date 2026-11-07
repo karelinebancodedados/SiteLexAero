@@ -102,16 +102,22 @@ export default function KarelinePage() {
             <div className="kareline-hero-bio">
               <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
                 <p style={{ lineHeight: 1.6, color: "var(--lex-text-dark-muted)", fontSize: "0.95rem", margin: 0, fontWeight: 300 }}>
-                  Kareline Staut é <strong style={{ color: "var(--lex-white)", fontWeight: 500 }}>Mestra em Direito</strong>, especialista em <strong style={{ color: "var(--lex-white)", fontWeight: 500 }}>Direito do Consumidor e Direito do Passageiro Aéreo</strong>, com anos de experiência na defesa intransigente dos viajantes frente aos abusos das companhias aéreas.
+                  Kareline Staut é advogada e fundadora da Lex Aero, boutique jurídica dedicada à proteção dos direitos dos passageiros e à atuação estratégica em conflitos envolvendo o transporte aéreo.
                 </p>
                 <p style={{ lineHeight: 1.6, color: "var(--lex-text-dark-muted)", fontSize: "0.95rem", margin: 0, fontWeight: 300 }}>
-                  Reconhecida por sua atuação estratégica e combativa em casos de <strong style={{ color: "var(--lex-white)", fontWeight: 500 }}>atrasos, cancelamentos, overbooking, avarias e extravio de bagagem</strong>, Kareline alia rigor técnico a resultados expressivos nos tribunais.
+                  Sua atuação é direcionada à análise jurídica de situações como atrasos e cancelamentos de voos, perda de conexão, preterição de embarque, ausência ou inadequação de assistência material, problemas de reacomodação, extravio e avaria de bagagem e falhas na prestação do serviço de transporte aéreo.
                 </p>
                 <p style={{ lineHeight: 1.6, color: "var(--lex-text-dark-muted)", fontSize: "0.95rem", margin: 0, fontWeight: 300 }}>
-                  Ao longo de sua trajetória, construiu uma reputação sólida como profissional que une <strong style={{ color: "var(--lex-white)", fontWeight: 500 }}>profundo conhecimento jurídico e comunicação clara</strong>, transformando a complexidade da lei em soluções práticas e indenizações justas para quem enfrenta problemas em suas viagens.
+                  Com formação acadêmica em Direito e vasta experiência na área jurídica, Kareline combina conhecimento técnico, análise estratégica do caso concreto e comunicação jurídica clara e acessível, buscando transformar situações complexas enfrentadas pelos passageiros em estratégias jurídicas objetivas e fundamentadas.
                 </p>
                 <p style={{ lineHeight: 1.6, color: "var(--lex-text-dark-muted)", fontSize: "0.95rem", margin: 0, fontWeight: 300 }}>
-                  Sob sua liderança, a LexAero ostenta uma <strong style={{ color: "var(--lex-white)", fontWeight: 500 }}>taxa de sucesso superior a 90%</strong>, garantindo que o seu direito seja tratado com a máxima seriedade, agilidade e eficiência. Com <strong style={{ color: "var(--lex-white)", fontWeight: 500 }}>indenizações significativas e precedentes relevantes conquistados</strong>, fortalece a cada dia a proteção dos passageiros no Brasil.
+                  Na Lex Aero, cada caso é analisado a partir das circunstâncias específicas da viagem, da documentação disponível, da legislação aplicável e do entendimento dos tribunais, evitando soluções padronizadas para problemas que podem apresentar fundamentos jurídicos distintos.
+                </p>
+                <p style={{ lineHeight: 1.6, color: "var(--lex-text-dark-muted)", fontSize: "0.95rem", margin: 0, fontWeight: 300 }}>
+                  Sua abordagem parte de uma premissa simples: direito do passageiro não é apenas saber que existe um direito. É compreender quando ele se aplica, quais provas são relevantes e qual estratégia jurídica é adequada para defendê-lo.
+                </p>
+                <p style={{ lineHeight: 1.6, color: "var(--lex-text-dark-muted)", fontSize: "0.95rem", margin: 0, fontWeight: 300 }}>
+                  A Lex Aero nasce dessa visão: oferecer uma atuação especializada, técnica e estratégica na defesa do passageiro aéreo, aproximando direito, tecnologia, análise de dados e comunicação jurídica para tornar a proteção do viajante mais eficiente e compreensível.
                 </p>
               </div>
               
