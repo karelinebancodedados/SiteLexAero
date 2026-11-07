@@ -1,4 +1,5 @@
 import { supabase } from "@/lib/supabaseClient";
+import { RADAR_SLUG_PATTERN } from "@/lib/radarPosts";
 
 export default async function sitemap() {
   const baseUrl = 'https://www.lexaero.com.br';
@@ -15,6 +16,7 @@ export default async function sitemap() {
     '/reembolso',
     '/diagnostico',
     '/kareline-staut',
+    '/sobre-a-lexaero',
     '/radar-juridico',
     '/blog',
     '/lgpd'
@@ -29,7 +31,8 @@ export default async function sitemap() {
   try {
     const { data, error } = await supabase
       .from('blog_posts')
-      .select('slug, updated_at');
+      .select('slug, updated_at')
+      .not("slug", "like", RADAR_SLUG_PATTERN);
     
     if (!error && data) {
       dynamicRoutes = data.map((post) => ({

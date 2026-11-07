@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { blogPosts as fallbackPosts } from "@/dados/blogData";
 import { supabase } from "@/lib/supabaseClient";
+import { RADAR_SLUG_PATTERN } from "@/lib/radarPosts";
 
 export const metadata = {
   title: "Blog | LexAero",
@@ -16,6 +17,7 @@ export default async function BlogPage() {
     const { data, error } = await supabase
       .from('blog_posts')
       .select('*')
+      .not("slug", "like", RADAR_SLUG_PATTERN)
       .order('created_at', { ascending: false });
       
     if (error) throw error;

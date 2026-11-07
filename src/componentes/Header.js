@@ -15,7 +15,7 @@ const NAV_LINKS = [
     ]
   },
   { label: "Como Funciona", href: "/#how-heading" },
-  { label: "Custas", href: "/#pricing-heading" },
+  { label: "Custas", href: "/#custas-heading" },
   { label: "A especialista", href: "/kareline-staut" },
   { label: "Dúvidas", href: "/#faq-heading" },
   { label: "Radar jurídico", href: "/radar-juridico" },
@@ -25,11 +25,10 @@ const NAV_LINKS = [
 export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [langDropdownOpen, setLangDropdownOpen] = useState(false);
-  const [activeDropdown, setActiveDropdown] = useState(null);
   const [currentLang, setCurrentLang] = useState("pt");
   const [dropdownPos, setDropdownPos] = useState({ top: 72, right: 16 });
   const langBtnRef = useRef(null);
-  const navRef = useRef(null);
+  const problemsRef = useRef(null);
 
   const openDropdown = (e) => {
     e.stopPropagation();
@@ -63,15 +62,15 @@ export default function Header() {
 
   // Fechar menu de problemas ao clicar fora
   useEffect(() => {
-    if (activeDropdown === null) return;
     const close = (e) => {
-      if (navRef.current && !navRef.current.contains(e.target)) {
-        setActiveDropdown(null);
+      const dropdown = problemsRef.current;
+      if (dropdown?.open && !dropdown.contains(e.target)) {
+        dropdown.open = false;
       }
     };
     document.addEventListener("click", close);
     return () => document.removeEventListener("click", close);
-  }, [activeDropdown]);
+  }, []);
 
   return (
     <>
@@ -100,27 +99,32 @@ export default function Header() {
           </Link>
 
           {/* Desktop Nav */}
-          <nav className="header__nav" aria-label="Navegação principal" ref={navRef}>
-            {NAV_LINKS.map((l, i) => (
+          <nav className="header__nav" aria-label="Navegação principal">
+            {NAV_LINKS.map(l => (
               l.dropdown ? (
-                <div key={i} className="header__dropdown-container" style={{ position: 'relative', display: 'inline-block' }}>
-                  <button
-                    className="header__link"
-                    style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', gap: '4px' }}
-                    onClick={(e) => { e.stopPropagation(); setActiveDropdown(activeDropdown === i ? null : i); }}
-                    aria-expanded={activeDropdown === i}
-                  >
+                <details
+                  key={l.label}
+                  ref={problemsRef}
+                  className="header__dropdown-container"
+                  onKeyDown={(e) => {
+                    if (e.key === "Escape" && e.currentTarget.open) {
+                      e.currentTarget.open = false;
+                      e.currentTarget.querySelector("summary").focus();
+                    }
+                  }}
+                >
+                  <summary className="header__link header__dropdown-trigger">
                     {l.label}
-                    <svg width="10" height="6" viewBox="0 0 10 6" fill="none" style={{ transition: 'transform 0.2s', transform: activeDropdown === i ? 'rotate(180deg)' : 'rotate(0deg)' }}><path d="M1 1L5 5L9 1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                  </button>
-                  <div className="header__dropdown-menu" style={{ visibility: activeDropdown === i ? 'visible' : 'hidden', opacity: activeDropdown === i ? 1 : 0, pointerEvents: activeDropdown === i ? 'auto' : 'none', transform: activeDropdown === i ? 'translateY(0)' : 'translateY(-10px)' }}>
+                    <svg aria-hidden="true" width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1L5 5L9 1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                  </summary>
+                  <div className="header__dropdown-menu">
                     {l.dropdown.map(d => (
-                      <Link key={d.href} href={d.href} className="header__dropdown-item" onClick={() => setActiveDropdown(null)}>
+                      <Link key={d.href} href={d.href} className="header__dropdown-item" onClick={() => { problemsRef.current.open = false; }}>
                         {d.label}
                       </Link>
                     ))}
                   </div>
-                </div>
+                </details>
               ) : (
                 <Link key={l.href || l.label} href={l.href} className="header__link">
                   {l.label}

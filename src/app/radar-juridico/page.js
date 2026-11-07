@@ -1,4 +1,43 @@
 import Link from "next/link";
+import { RADAR_SLUG_PATTERN } from "@/lib/radarPosts";
+import { supabase } from "@/lib/supabaseClient";
+import styles from "./updates.module.css";
+
+export const revalidate = 60;
+const updateDate = new Intl.DateTimeFormat("pt-BR", {
+  dateStyle: "long",
+  timeZone: "America/Sao_Paulo",
+});
+
+function UpdateCard({ update }) {
+  const content = update.content?.trim() || "";
+  const summary = update.summary?.trim();
+  const description = summary || content;
+  const needsExpansion = Boolean(content && (description !== content || content.length > 220));
+  const preview = needsExpansion && description.length > 220
+    ? description.slice(0, 220).replace(/\s+\S*$/, "") + "…"
+    : description;
+
+  return (
+    <article className={styles.card}>
+      <div className={styles.metadata}>
+        <span>{update.category || "Jurisprudência"}</span>
+        <time dateTime={update.created_at}>{updateDate.format(new Date(update.created_at))}</time>
+      </div>
+      <h3>{update.title}</h3>
+      {preview && <p className={styles.preview}>{preview}</p>}
+      {needsExpansion && (
+        <details className={styles.details}>
+          <summary>
+            <span className={styles.read}>Ler atualização</span>
+            <span className={styles.close}>Recolher atualização</span>
+          </summary>
+          <div className={styles.content}>{content}</div>
+        </details>
+      )}
+    </article>
+  );
+}
 
 export const metadata = {
   title: "Radar Jurídico | LexAero",
@@ -44,7 +83,15 @@ const IconBuilding = () => (
   </svg>
 );
 
-export default function RadarJuridicoPage() {
+export default async function RadarJuridicoPage() {
+  const { data: updates, error } = await supabase
+    .from("blog_posts")
+    .select("id, title, category, summary, content, created_at")
+    .like("slug", RADAR_SLUG_PATTERN)
+    .order("created_at", { ascending: false });
+
+  if (error) console.error("Erro ao carregar o Radar Jurídico:", error.message);
+
   return (
     <div style={{ background: "#f8f7f4", minHeight: "100vh" }}>
 
@@ -84,6 +131,20 @@ export default function RadarJuridicoPage() {
           </div>
         </div>
       </section>
+
+      {updates?.length > 0 && (
+        <section className="section" aria-labelledby="radar-atualizacoes">
+          <div className="container">
+            <div className={styles.heading}>
+              <span className="eyebrow">Jurisprudência e novidades</span>
+              <h2 id="radar-atualizacoes">Últimas atualizações</h2>
+            </div>
+            <div className={styles.grid}>
+              {updates.map(update => <UpdateCard key={update.id} update={update} />)}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ALERTA STF */}
       <div style={{ background: "#fffbea", borderBottom: "1px solid #fde68a", marginBottom: "1.5rem" }}>

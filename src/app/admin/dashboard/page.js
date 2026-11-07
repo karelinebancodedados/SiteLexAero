@@ -1,7 +1,9 @@
 "use client";
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
+import { v4 as uuidv4 } from "uuid";
 import { supabase } from "@/lib/supabaseClient";
+import { RADAR_SLUG_PATTERN, RADAR_SLUG_PREFIX } from "@/lib/radarPosts";
 import styles from "./lead-details.module.css";
 
 const answerLabels = {
@@ -303,7 +305,7 @@ function LeadsTab() {
 }
 
 // ── Blog Tab ───────────────────────────────────────────────────
-function BlogTab() {
+function BlogTab({ radar = false }) {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(null); // null = list, {} = new, post = editing
@@ -314,10 +316,14 @@ function BlogTab() {
 
   const fetchPosts = useCallback(async () => {
     setLoading(true);
-    const { data } = await supabase.from("blog_posts").select("*").order("created_at", { ascending: false });
+    const query = supabase.from("blog_posts").select("*").order("created_at", { ascending: false });
+    const { data, error } = await (radar
+      ? query.like("slug", RADAR_SLUG_PATTERN)
+      : query.not("slug", "like", RADAR_SLUG_PATTERN));
+    if (error) setMsg("❌ Não foi possível carregar as publicações: " + error.message);
     setPosts(data || []);
     setLoading(false);
-  }, []);
+  }, [radar]);
 
   useEffect(() => { fetchPosts(); }, [fetchPosts]);
 
@@ -337,6 +343,15 @@ function BlogTab() {
 
   const handleSave = async (e) => {
     e.preventDefault();
+    const slug = radar ? (editing.id ? editing.slug : RADAR_SLUG_PREFIX + uuidv4()) : form.slug.trim();
+    if (!form.title.trim() || !slug || (radar && !form.content.trim())) {
+      setMsg("❌ Preencha os campos obrigatórios.");
+      return;
+    }
+    if (!radar && slug.startsWith(RADAR_SLUG_PREFIX)) {
+      setMsg("❌ Use outro slug. Este prefixo é reservado ao Radar Jurídico.");
+      return;
+    }
     setSaving(true);
     setMsg("");
     
@@ -365,18 +380,22 @@ function BlogTab() {
     }
     
     setMsg("⏳ Salvando conteúdo...");
-    const payload = { title: form.title, slug: form.slug, category: form.category, summary: form.summary, content: form.content, cover_image: uploadedImageUrl, read_time: form.readTime, updated_at: new Date().toISOString() };
+    const payload = { title: form.title.trim(), slug, category: form.category || (radar ? "Jurisprudência" : ""), summary: form.summary, content: form.content, cover_image: uploadedImageUrl, read_time: form.readTime, updated_at: new Date().toISOString() };
 
     let error;
     if (editing && editing.id) {
-      ({ error } = await supabase.from("blog_posts").update(payload).eq("id", editing.id));
+      ({ error } = await supabase.from("blog_posts").update(payload).eq("id", editing.id).eq("slug", editing.slug).select("id").single());
     } else {
       ({ error } = await supabase.from("blog_posts").insert({ ...payload, created_at: new Date().toISOString() }));
     }
 
     setSaving(false);
     if (error) { setMsg("❌ Erro: " + error.message); }
-    else { setMsg("✅ Salvo com sucesso!"); fetchPosts(); setTimeout(() => { setEditing(null); setMsg(""); }, 1200); }
+    else {
+      setEditing(null);
+      setMsg(radar ? "✅ Atualização publicada." : "✅ Salvo com sucesso!");
+      fetchPosts();
+    }
   };
 
   const [postToDelete, setPostToDelete] = useState(null);
@@ -389,7 +408,7 @@ function BlogTab() {
     if (!postToDelete) return;
     
     setLoading(true);
-    const { data, error } = await supabase.from("blog_posts").delete().eq("id", postToDelete.id).select();
+    const { data, error } = await supabase.from("blog_posts").delete().eq("id", postToDelete.id).eq("slug", postToDelete.slug).select("id");
     
     if (error) {
       alert("Erro do Supabase ao excluir: " + error.message);
@@ -413,10 +432,30 @@ function BlogTab() {
         <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "1.5rem" }}>
           <button onClick={() => { setEditing(null); setMsg(""); }} style={{ color: "#FCBD26", background: "none", border: "none", cursor: "pointer", fontSize: "0.9rem" }}>← Voltar</button>
           <h2 style={{ color: "#fff", fontSize: "1.2rem", fontWeight: 700, margin: 0 }}>
-            {editing.id ? "Editar post" : "Novo post"}
+            {radar ? (editing.id ? "Editar atualização" : "Nova atualização") : (editing.id ? "Editar post" : "Novo post")}
           </h2>
         </div>
-        <form onSubmit={handleSave}>
+        <form onSubmit={handleSave} style={radar ? { maxWidth: 760 } : undefined}>
+          {radar ? (
+            <>
+              <p style={{ color: "#bbb", margin: "0 0 1.5rem" }}>
+                Escreva um título e conte o que aconteceu. Ao publicar, a atualização aparece na página do Radar Jurídico.
+              </p>
+              <label htmlFor="radar-title" style={{ display: "block", color: "#fff", marginBottom: "0.35rem" }}>Título</label>
+              <input id="radar-title" style={inputStyle} value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} required placeholder="Ex.: Nova decisão sobre perda de conexão" />
+              <label htmlFor="radar-content" style={{ display: "block", color: "#fff", margin: "0.5rem 0 0.35rem" }}>Texto da atualização</label>
+              <textarea id="radar-content" style={{ ...inputStyle, minHeight: 170, resize: "vertical", font: "inherit" }} value={form.content} onChange={e => setForm(f => ({ ...f, content: e.target.value }))} required placeholder="Conte o que aconteceu e o que isso muda para o passageiro." />
+              <details style={{ border: "1px solid #333", borderRadius: 8, padding: "0.75rem 1rem", marginBottom: "1.25rem" }}>
+                <summary style={{ cursor: "pointer", color: "#ddd" }}>Categoria e resumo (opcionais)</summary>
+                <div style={{ marginTop: "0.85rem" }}>
+                  <label htmlFor="radar-category" style={{ display: "block", color: "#fff", marginBottom: "0.35rem" }}>Categoria</label>
+                  <input id="radar-category" style={inputStyle} value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value }))} placeholder="Jurisprudência" />
+                  <label htmlFor="radar-summary" style={{ display: "block", color: "#fff", marginBottom: "0.35rem" }}>Resumo</label>
+                  <textarea id="radar-summary" style={{ ...inputStyle, minHeight: 72, resize: "vertical", marginBottom: 0 }} value={form.summary} onChange={e => setForm(f => ({ ...f, summary: e.target.value }))} placeholder="Se ficar em branco, o Radar usa o início do texto." />
+                </div>
+              </details>
+            </>
+          ) : (
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0 0.75rem" }}>
             <div style={{ gridColumn: "1/-1" }}>
               <label style={{ color: "#aaa", fontSize: "0.75rem", fontWeight: 600, letterSpacing: "0.05em" }}>TÍTULO</label>
@@ -470,12 +509,13 @@ function BlogTab() {
               />
             </div>
           </div>
+          )}
           {msg && <p style={{ color: msg.startsWith("✅") ? "#4ade80" : "#ef4444", marginBottom: "1rem" }}>{msg}</p>}
           <button type="submit" disabled={saving} style={{
             background: saving ? "#7a6010" : "#FCBD26", color: "#111", fontWeight: 700,
             padding: "0.85rem 2rem", borderRadius: "8px", border: "none", cursor: saving ? "not-allowed" : "pointer"
           }}>
-            {saving ? "Salvando..." : "💾 Salvar post"}
+            {saving ? "Salvando..." : radar ? "Publicar atualização" : "💾 Salvar post"}
           </button>
         </form>
       </div>
@@ -486,20 +526,21 @@ function BlogTab() {
     <div>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
         <div>
-          <h2 style={{ color: "#fff", fontSize: "1.2rem", fontWeight: 700, margin: 0 }}>Posts do blog</h2>
-          <p style={{ color: "#666", fontSize: "0.8rem", margin: 0 }}>{posts.length} artigos publicados</p>
+          <h2 style={{ color: "#fff", fontSize: "1.2rem", fontWeight: 700, margin: 0 }}>{radar ? "Radar Jurídico" : "Posts do blog"}</h2>
+          <p style={{ color: "#aaa", fontSize: "0.8rem", margin: 0 }}>{posts.length} publicações</p>
         </div>
         <button onClick={startNew} style={{
           background: "#FCBD26", color: "#111", fontWeight: 700, padding: "0.6rem 1.2rem",
           borderRadius: "8px", border: "none", cursor: "pointer", fontSize: "0.85rem"
-        }}>+ Novo post</button>
+        }}>{radar ? "+ Nova atualização" : "+ Novo post"}</button>
       </div>
 
+      {msg && <p role="status" style={{ color: msg.startsWith("✅") ? "#4ade80" : "#ef4444" }}>{msg}</p>}
       {loading ? (
         <p style={{ color: "#666", textAlign: "center", padding: "2rem" }}>Carregando posts...</p>
       ) : posts.length === 0 ? (
         <div style={{ textAlign: "center", padding: "3rem", color: "#666" }}>
-          <p>Nenhum post no banco. Clique em "+ Novo post" para criar.</p>
+          <p>{radar ? "Nenhuma atualização publicada." : "Nenhum post publicado."}</p>
         </div>
       ) : (
         <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
@@ -514,7 +555,7 @@ function BlogTab() {
               <div style={{ flex: 1, minWidth: "200px" }}>
                 <p style={{ color: "#FCBD26", fontSize: "0.7rem", fontWeight: 700, margin: 0, letterSpacing: "0.1em" }}>{post.category}</p>
                 <p style={{ color: "#fff", fontWeight: 600, fontSize: "0.95rem", margin: "0.1rem 0" }}>{post.title}</p>
-                <p style={{ color: "#555", fontSize: "0.75rem", margin: 0 }}>/{post.slug} • {new Date(post.created_at).toLocaleDateString("pt-BR")}</p>
+                <p style={{ color: "#aaa", fontSize: "0.75rem", margin: 0 }}>{!radar && `/${post.slug} • `}{new Date(post.created_at).toLocaleDateString("pt-BR")}</p>
               </div>
               <div style={{ display: "flex", gap: "0.5rem" }}>
                 <button onClick={() => startEdit(post)} style={{ padding: "0.45rem 0.9rem", borderRadius: "6px", border: "1px solid #2E2E2E", background: "transparent", color: "#fff", cursor: "pointer", fontSize: "0.8rem" }}>✏️ Editar</button>
@@ -529,7 +570,7 @@ function BlogTab() {
       {postToDelete && (
         <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.8)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 9999 }}>
           <div style={{ background: "#111", border: "1px solid #2E2E2E", padding: "2rem", borderRadius: "12px", width: "90%", maxWidth: "400px", textAlign: "center" }}>
-            <h3 style={{ color: "#fff", marginTop: 0 }}>Excluir post?</h3>
+            <h3 style={{ color: "#fff", marginTop: 0 }}>{radar ? "Excluir atualização?" : "Excluir post?"}</h3>
             <p style={{ color: "#aaa", fontSize: "0.9rem", marginBottom: "1.5rem" }}>
               Tem certeza que deseja apagar "{postToDelete.title}"? Esta ação não pode ser desfeita.
             </p>
@@ -572,7 +613,7 @@ export default function AdminDashboard() {
           <p style={{ color: "#555", fontSize: "0.7rem", margin: 0 }}>Painel Admin</p>
         </div>
         <nav style={{ flex: 1 }}>
-          {[["leads","📋","Leads"],["blog","📝","Blog"]].map(([v, icon, label]) => (
+          {[["leads","📋","Leads"],["blog","📝","Blog"],["radar","⚖️","Radar Jurídico"]].map(([v, icon, label]) => (
             <button key={v} onClick={() => setTab(v)} style={{
               display: "flex", alignItems: "center", gap: "0.6rem", width: "100%",
               padding: "0.65rem 0.75rem", borderRadius: "8px", border: "none",
@@ -593,7 +634,8 @@ export default function AdminDashboard() {
       {/* Main content */}
       <div style={{ flex: 1, padding: "2rem", overflowY: "auto" }}>
         {tab === "leads" && <LeadsTab />}
-        {tab === "blog" && <BlogTab />}
+        {tab === "blog" && <BlogTab key="blog" />}
+        {tab === "radar" && <BlogTab key="radar" radar />}
       </div>
     </div>
   );
