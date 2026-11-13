@@ -7,7 +7,7 @@ import AnimatedNumber from "@/componentes/AnimatedNumber";
 import AnimatedPlane from "@/componentes/AnimatedPlane";
 import LeadCaptureForm from "@/componentes/LeadCaptureForm";
 import { blogPosts } from "@/dados/blogData";
-import DiagnosticForm from "@/componentes/DiagnosticForm";
+import QuickDiagnosticForm from "@/componentes/QuickDiagnosticForm";
 
 
 
@@ -47,6 +47,14 @@ const PROBLEMS = [
 export default function ServiceTemplate({ serviceData }) {
   const { hero, faqs, diagnosticValue, conversion, rights, documents, documentsTitle, diagnosticPrompt } = serviceData;
   const diagUrl = `/diagnostico?problema=${encodeURIComponent(diagnosticValue)}`;
+  // Nas páginas de um problema específico, o formulário rápido já começa com ele escolhido.
+  const initialProblem = {
+    "Voo atrasado": "atraso_cancel",
+    "Voo cancelado": "atraso_cancel",
+    "Overbooking / impedimento de embarque": "overbooking",
+    "Problema com bagagem": "bagagem",
+    "Perdi minha conexão": "conexao",
+  }[diagnosticValue] ?? null;
   const formattedHeadline = hero.headline.replace(/(?<=<br\/>)([^<>]+)$/, '<span style="color: var(--lex-gold)">$1</span>');
   const rightsHeadline = rights?.title;
 
@@ -251,7 +259,7 @@ export default function ServiceTemplate({ serviceData }) {
                 boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5)",
                 border: "1px solid rgba(255, 255, 255, 0.2)",
               }}>
-                <DiagnosticForm isEmbedded={true} />
+                <QuickDiagnosticForm isEmbedded={true} initialProblem={initialProblem} />
               </div>
             </div>
 
