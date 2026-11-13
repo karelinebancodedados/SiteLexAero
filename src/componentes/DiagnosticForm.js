@@ -121,7 +121,7 @@ export default function DiagnosticForm({ isEmbedded = false }) {
       gclid: new URLSearchParams(window.location.search).get("gclid"),
       last_step_reached: furthestStep.current,
       completed,
-      form_data: { ...answers, source: "diagnostico" },
+      form_data: { ...answers, source: "diagnostico_completo" },
       updated_at: new Date().toISOString()
     };
 
@@ -129,7 +129,7 @@ export default function DiagnosticForm({ isEmbedded = false }) {
     pendingSave.current = pendingSave.current.then(async () => {
       const { error } = await supabase.from('leads').upsert(payload, { onConflict: 'id' });
       if (error) throw error;
-      if (completed) pushLeadGerado('diagnostico_voo');
+      if (completed) pushLeadGerado('diagnostico_completo');
     }).catch(error => console.error(error));
   };
 

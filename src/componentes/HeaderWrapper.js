@@ -7,7 +7,7 @@ export default function HeaderWrapper() {
   const pathname = usePathname();
 
   // Esconder header na página de funil (diagnostico)
-  if (pathname === "/diagnostico") {
+  if (pathname === "/diagnostico" || pathname === "/diagnostico-completo") {
     return null;
   }
 

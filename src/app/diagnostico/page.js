@@ -1,4 +1,4 @@
-import DiagnosticForm from "@/componentes/DiagnosticForm";
+import QuickDiagnosticForm from "@/componentes/QuickDiagnosticForm";
 
 export const metadata = {
   title: "Calcule Sua Indenização de Voo | Análise Gratuita LexAero",
@@ -17,7 +17,7 @@ export default function DiagnosticoPage() {
       padding: "2rem 1rem",
       boxSizing: "border-box",
     }}>
-      <DiagnosticForm />
+      <QuickDiagnosticForm />
     </main>
   );
 }

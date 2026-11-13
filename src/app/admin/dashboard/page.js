@@ -70,7 +70,9 @@ function LeadAnswers({ lead }) {
   const problem = answers.tipo || lead.problem_type;
   const sections = answers.source === "contato"
     ? [["Contato", ["email"]], answerSections[3]]
-    : answerSections;
+    : answers.source === "diagnostico_rapido"
+      ? [answerSections[3]]
+      : answerSections;
   const conditionalFields = {
     sub: problem === "atraso_cancel" || problem === "bagagem",
     atrasoDur: problem === "conexao" || (problem === "atraso_cancel" && answers.sub === "atraso"),
@@ -172,7 +174,7 @@ function LeadsTab() {
 
   const problemLabel = (p) => ({
     atraso_cancel: "Atraso/Cancel.", overbooking: "Overbooking",
-    bagagem: "Bagagem", conexao: "Conexão"
+    bagagem: "Bagagem", conexao: "Conexão", outro: "Outro"
   }[p] || p || "-");
 
   return (
@@ -251,7 +253,7 @@ function LeadsTab() {
                     Ver detalhes
                   </button>
                 </td>
-                <td style={{ padding: "0.75rem 1rem", color: "#FCBD26", fontWeight: 700, textAlign: "center" }}>{lead.form_data?.source === "contato" ? "Contato" : `${lead.last_step_reached || 1}/7`}</td>
+                <td style={{ padding: "0.75rem 1rem", color: "#FCBD26", fontWeight: 700, textAlign: "center" }}>{lead.form_data?.source === "contato" ? "Contato" : lead.form_data?.source === "diagnostico_rapido" ? `Rápido ${lead.last_step_reached || 1}/2` : `${lead.last_step_reached || 1}/7`}</td>
                 <td style={{ padding: "0.75rem 1rem" }}>
                   <span style={{
                     padding: "0.2rem 0.7rem", borderRadius: "99px", fontSize: "0.75rem", fontWeight: 600,
@@ -289,10 +291,10 @@ function LeadsTab() {
               <div><dt>WhatsApp</dt><dd>{selectedLead.phone || "Não informado"}</dd></div>
               <div><dt>Problema</dt><dd>{problemLabel(selectedLead.problem_type || selectedLead.form_data?.tipo)}</dd></div>
               <div>
-                <dt>{selectedLead.form_data?.source === "contato" ? "Formulário de contato" : "Diagnóstico"}</dt>
+                <dt>{selectedLead.form_data?.source === "contato" ? "Formulário de contato" : selectedLead.form_data?.source === "diagnostico_rapido" ? "Diagnóstico rápido" : "Diagnóstico completo"}</dt>
                 <dd>
                   {selectedLead.completed ? "Finalizado" : "Incompleto"}
-                  {selectedLead.form_data?.source !== "contato" && ` · Etapa ${selectedLead.last_step_reached || 1}/7`}
+                  {selectedLead.form_data?.source !== "contato" && ` · Etapa ${selectedLead.last_step_reached || 1}/${selectedLead.form_data?.source === "diagnostico_rapido" ? 2 : 7}`}
                 </dd>
               </div>
             </dl>

@@ -6,7 +6,7 @@ import AnimatedNumber from "@/componentes/AnimatedNumber";
 import AnimatedPlane from "@/componentes/AnimatedPlane";
 import { blogPosts } from "@/dados/blogData";
 import LeadCaptureForm from "@/componentes/LeadCaptureForm";
-import DiagnosticForm from "@/componentes/DiagnosticForm";
+import QuickDiagnosticForm from "@/componentes/QuickDiagnosticForm";
 import FaqAccordion from "@/componentes/FaqAccordion";
 
 export const metadata = {
@@ -289,7 +289,7 @@ export default function Home() {
                 boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5)",
                 border: "1px solid rgba(255, 255, 255, 0.2)",
               }}>
-                <DiagnosticForm isEmbedded={true} />
+                <QuickDiagnosticForm isEmbedded={true} />
               </div>
             </div>
 
